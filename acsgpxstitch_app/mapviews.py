@@ -23,7 +23,6 @@ def process_gpx_file(request, file, atrack):
     gpx = gpxpy.parse(gpx_file)
 
     points = []
-    points_info = []
     timezone_info = timezone(settings.TIME_ZONE)   
     previous_point = None
     distance = 0
@@ -41,20 +40,21 @@ def process_gpx_file(request, file, atrack):
                                     point.elevation,
                                     ]))
 
-                #points_info.append(tuple([
-                #    round(point.elevation, 2),
-                #   ]))
-
         atrack["distance"] = round(distance/1000, 2)
+        atrack["points"] = points
 
     return atrack
 
 
-def make_map(request, points, points_info, filename, map_filename):
-
-    # print(points)
-    ave_lat = sum(p[0] for p in points)/len(points)
-    ave_lon = sum(p[1] for p in points)/len(points)
+def make_map(request, tracks, map_filename):
+    ave_lats = []
+    ave_lons = []
+    for t in tracks:
+        ave_lats.append(sum(float(p[0]) for p in t["points"])/len(t["points"]))
+        ave_lons.append(sum(float(p[1]) for p in t["points"])/len(t["points"]))
+    
+    ave_lat = sum(float(p) for p in ave_lats) / len(ave_lats)
+    ave_lon = sum(float(p) for p in ave_lons) / len(ave_lons)
 
     # Load map centred on average coordinates
     my_map = folium.Map(location=[ave_lat, ave_lon], zoom_start=12)
@@ -63,70 +63,21 @@ def make_map(request, points, points_info, filename, map_filename):
     max_lat = float(-9999999)
     min_lon = float(9999999)
     max_lon = float(-9999999)
-    for p in points:
-        if min_lat > p[0]:
-            min_lat = p[0]
-        if max_lat < p[0]:
-            max_lat = p[0]
-        if min_lon > p[1]:
-            min_lon = p[1]
-        if max_lon < p[1]:
-            max_lon = p[1]
+    for t in tracks:
+        for p in t["points"]:
+                if min_lat > p[0]:
+                    min_lat = p[0]
+                if max_lat < p[0]:
+                    max_lat = p[0]
+                if min_lon > p[1]:
+                    min_lon = p[1]
+                if max_lon < p[1]:
+                    max_lon = p[1]
 
     sw = tuple([min_lat, min_lon])
     ne = tuple([max_lat, max_lon])
 
     my_map.fit_bounds([sw, ne]) 
-
-
-    # add a markers
-    # for each in points:  
-    #     folium.Marker(each).add_to(my_map)
-    # folium.Marker(points[0], icon=folium.Icon(color='lightgray', icon='home', prefix='fa')).add_to(my_map)
-
-    i = 0
-    previous_marker_distance = 0
-
-    # for x in range(int(len(points)/10), len(points), int(len(points)/11)):
-    ip = int(intermediate_points_selected)
-    if ip > 0:
-        for x in range(len(points)):
-            distance = float(points_info[x][1])
-            if distance < previous_marker_distance + ip:
-                continue
-            previous_marker_distance = distance
-            i = i + ip
-            time = points_info[x][0]
-            duration = points_info[x][2]
-            moving_duration = points_info[x][3]
-            speed = points_info[x][4]
-            try:
-                avgspeed = float((points_info[x][1] / moving_duration.seconds) * 3.6)
-            except:
-                avgspeed = 0
-            heartrate = points_info[x][5]
-            avgheartrate = points_info[x][6]
-            cadence = points_info[x][7]
-            avgcadence = points_info[x][8]
-            tooltip_text = 'Intermediate point ' + str(i/1000) + ' km, ' + str(speed) + ' km/h'
-            tooltip_style = 'color: #700394; font-size: 0.85vw'
-            tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-
-            html_popup = make_html_popup(
-                str(i),
-                time,
-                duration,
-                moving_duration, 
-                distance,
-                speed,
-                avgspeed,
-                heartrate,
-                avgheartrate,
-                cadence,
-                avgcadence,
-                )
-            popup = folium.Popup(html_popup, max_width=400)
-            folium.Marker(points[x], icon=folium.Icon(color='purple'), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # start marker
     tooltip_text = 'Start, click for details'
@@ -135,23 +86,24 @@ def make_map(request, points, points_info, filename, map_filename):
     html = (
         "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Start</h3>" +
         "<table style='color: #700394; width: 100%; font-size: 0.85vw'><tr><td><b>Time</b></td>" +
-        "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
+        # "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[0], icon=folium.Icon(color='lightgray'), tooltip=tooltip, popup=popup).add_to(my_map)
+    # folium.Marker(points[0], icon=folium.Icon(color='lightgray'), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # finish marker
     tooltip_text = 'Finish, click for details'
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
-    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+    # tooltip_style = 'color: #700394; font-size: 0.85vw'
+    # tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     # tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
     # duration = tx - t0
-    duration = points_info[-1][2]
-    moving_duration = points_info[-1][3]
-    avgspeed = float((points_info[-1][1] / moving_duration.seconds) * 3.6)
-    distance = float(points_info[-1][1]) / 1000
+    # duration = points_info[-1][2]
+    # moving_duration = points_info[-1][3]
+    # avgspeed = float((points_info[-1][1] / moving_duration.seconds) * 3.6)
+    # distance = float(points_info[-1][1]) / 1000
 
+    '''
     html = (
         "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Finish</h3>"+
         "<table style='color: #700394; width: 100%; font-size: 0.85vw'>" +
@@ -163,11 +115,17 @@ def make_map(request, points, points_info, filename, map_filename):
         "</table>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[-1], icon=folium.Icon(color='gray'), tooltip=tooltip, popup=popup).add_to(my_map)
+    '''
+    # folium.Marker(points[-1], icon=folium.Icon(color='gray'), tooltip=tooltip, popup=popup).add_to(my_map)
  
     # folium.LayerControl(collapsed=True).add_to(my_map)
 
     # add lines
+    points = []
+    for t in tracks:
+        for p in t["points"]:
+            points.append(tuple([p[0], p[1]]))
+
     folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(my_map)
 
     # Save map

@@ -17,7 +17,7 @@ import hashlib
 
 
 def track_list(request):   
-    map_filename = "/static/maps/acsgpxstitch.html"
+    map_filename = "acsgpxstitch.html"
 
     try:
         if not tracks:
@@ -39,10 +39,12 @@ def track_list(request):
             i += 1
             if i >= 5:
                 break
-    
+
+        make_map(request, tracks, map_filename)
+
     return render(request, 'acsgpxstitch_app/track_list.html', {
         "tracks": tracks,
-        "map_filename": map_filename,
+        "map_filename": "/static/maps/" + map_filename,
         }
     )
 
