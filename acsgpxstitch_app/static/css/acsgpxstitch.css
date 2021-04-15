@@ -1,0 +1,237 @@
+.page-header {
+    background-color: #C4C4C4;
+    margin-top: 0;
+    padding: 20px 20px 30px 40px;
+}
+
+.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+    color: #700394;
+    font-size: 36pt;
+    font-family: 'Oswald';
+    margin-left: 8px;
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+[class*="col-"] {
+    float: left;
+    padding: 15px;
+    border: none;
+}
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+@media only screen and (max-width: 600px) {
+.scalefont {
+    font-size: 1.5vw; 
+    color: #700394; 
+  }  
+}
+
+@media only screen and (min-width: 600px) {
+.scalefont {
+    font-size: 1vw; 
+    color: #700394;
+  }  
+}
+
+@media only screen and (min-width: 1600px) {
+.scalefont {
+    font-size: 0.85vw; 
+    color: #700394;
+  }  
+}
+
+.scalefont:hover {
+  color: #700394;
+}
+
+.helptext {
+  visibility: hidden;
+}
+
+.helptext:hover {
+  visibility: visible;
+}
+
+@media only screen and (orientation: portrait) {
+    /* For mobile phones: */
+    [class*="col-"] {
+        width: 100%;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+/* For desktop: */
+    .col-1 {width: 8.33%;}
+    .col-2 {width: 16.66%;}
+    .col-3 {width: 25%;}
+    .col-4 {width: 33.33%;}
+    .col-5 {width: 41.66%;}
+    .col-6 {width: 50%;}
+    .col-7 {width: 58.33%;}
+    .col-8 {width: 66.66%;}
+    .col-9 {width: 75%;}
+    .col-10 {width: 83.33%;}
+    .col-11 {width: 91.66%;}
+    .col-12 {width: 100%;}
+}
+
+body {
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: #F0F0F0;
+    background-image: url("/static/img/acsgpxstitchbg-blurred.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    max-width: 100%;
+    height: auto;
+}
+
+div.detail {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+table, th, td {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+.table-hover, th, td {
+    color: #700394;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.table-row {
+    cursor:pointer;
+}
+
+.gpxfilelabel {
+    cursor:pointer;
+}
+
+.gpxfilepath {
+    width: 100%;
+    background-color: transparent;
+    border-color: transparent;
+    color: #700394;
+}
+
+h1, h1 a, h1 a:visited, h1 a:active {
+    color: #700394;
+    font-size: 36pt;
+    font-family: 'Oswald';
+}
+
+h2, h2 a, h2 a:visited {
+    color: #700394;
+    font-family: 'Oswald';
+}
+
+a, a:active, a:visited, a:hover {
+    color: #700394;  
+}
+
+.container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 85%
+  }
+
+  .container-iframe {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 48%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  }
+  
+  /* Then style the iframe to fit in the container div with full height and width */
+  .responsive-iframe {
+    position: relative;
+    border: none;
+    padding-left: 8%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90%;
+  }
+
+/* The checkcontainer */
+.checkcontainer {
+    display: block;
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .checkcontainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    background-color: #fb89ec;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .checkcontainer:hover input ~ .checkmark {
+    background-color: #fa56e4;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .checkcontainer input:checked ~ .checkmark {
+    background-color: #700394;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .checkcontainer input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .checkcontainer .checkmark:after {
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid pink;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  

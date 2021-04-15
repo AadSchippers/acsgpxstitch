@@ -1,0 +1,210 @@
+{% extends 'acsgpxstitch_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container"
+    <div class="row">
+        <div class="col-3">
+            <table class="scalefont">
+                <tr>
+                    <td valign="Top"><b>Intermediate points</b></td>
+                    <td valign="Bottom" style="text-align:right">
+                        <form method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="Date_end" value="{{ date_end }}">
+                            <input type="hidden" name="Date_start" value="{{ date_start }}">
+                            <input type="hidden" name="Order" value="{{ order_selected }}">
+                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                            {% csrf_token %}
+                            <select name="Intermediate_points" id="intermediate_points" onchange=this.form.submit()>
+                                {% if intermediate_points_selected == 0 %}
+                                    <option value=0 selected="selected">none</option>
+                                {% else %}
+                                    <option value=0>none</option>
+                                {% endif %}
+                                {% if intermediate_points_selected == 1000 %}
+                                    <option value=1000 selected="selected">every 1 km</option>
+                                {% else %}
+                                    <option value=1000>every 1 km</option>
+                                {% endif %}
+                                {% if intermediate_points_selected == 3000 %}
+                                    <option value=3000 selected="selected">every 3 km</option>
+                                {% else %}
+                                    <option value=3000>every 3 km</option>
+                                {% endif %}
+                                {% if intermediate_points_selected == 5000 %}
+                                    <option value=5000 selected="selected">every 5 km</option>
+                                {% else %}
+                                    <option value=5000>every 5 km</option>
+                                {% endif %}
+                                {% if intermediate_points_selected == 10000 %}
+                                    <option value=10000 selected="selected">every 10 km</option>
+                                {% else %}
+                                    <option value=10000>every 10 km</option>
+                                {% endif %}
+                            </select>
+                        </form>   
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Filename</b></td>
+                    <td style="text-align:right">{{ atrack.displayfilename }}</td>
+                </tr>
+                <tr>
+                    <td><b>Created&nbsp;date</b></td>
+                    <td style="text-align:right">{{ atrack.created_date|date:"d b Y" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Name</b></td>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="Date_end" value="{{ date_end }}">
+                        <input type="hidden" name="Date_start" value="{{ date_start }}">
+                        <input type="hidden" name="Order" value="{{ order_selected }}">
+                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                        <td style="text-align:right"><input 
+                            type="text" style="text-align:right" 
+                            name="name_input" 
+                            autocomplete="off"
+                            value="{{ atrack.name }}" 
+                            onchange=this.form.submit()>
+                        </td>
+                    </form>
+                </tr>
+                <tr>
+                    <td><b>Profile</b></td>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="Date_end" value="{{ date_end }}">
+                        <input type="hidden" name="Date_start" value="{{ date_start }}">
+                        <input type="hidden" name="Order" value="{{ order_selected }}">
+                        <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                        <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                        <td style="text-align:right"><input 
+                            type="text" style="text-align:right" 
+                            name="profile_input" 
+                            list="profile_list" 
+                            autocomplete="off"
+                            {% if atrack.profile %}
+                                value="{{ atrack.profile }}" 
+                            {% else %}
+                                value="-" 
+                            {% endif %}
+                            onchange=this.form.submit()>
+                        </td>
+                        <datalist name="Profile" id="profile_list" onchange=this.form.submit()>
+                            {% if bike_profiles %}
+                                {% for profile in bike_profiles %}
+                                    <option value="{{ profile }}">{{ profile }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </datalist>
+                    </form>
+                </tr>
+                <tr>
+                    <td><b>Length&nbsp;(km)</b></td>
+                    <td  style="text-align:right">{{ atrack.length }}</td>
+                </tr>
+                <tr>
+                    <td><b>Duration</b></td>
+                    <td  style="text-align:right">{{ atrack.timelength|time:"H:i:s" }}</td>
+                </tr>
+                <tr>
+                    <td><b>Average&nbsp;speed&nbsp;(km/h)</b></td>
+                    <td style="text-align:right">{{ atrack.avgspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Maximum&nbsp;speed&nbsp;(km/h)</b></td>
+                    <td style="text-align:right">{{ atrack.maxspeed }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;descent&nbsp;(m)</b></td>
+                    <td style="text-align:right">{{ atrack.totaldescent }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total&nbsp;ascent&nbsp;(m)</b></td>
+                    <td style="text-align:right">{{ atrack.totalascent }}</td>
+                </tr>
+                {% if atrack.avgcadence > 0 %}
+                    <tr>
+                        <td><b>Average&nbsp;cadence</b></td>
+                        <td style="text-align:right">{{ atrack.avgcadence }}</td>
+                    </tr>
+                {% endif %}
+                {% if atrack.maxcadence > 0 %}
+                    <tr>
+                        <td><b>Maximum&nbsp;cadence</b></td>
+                        <td  style="text-align:right">{{ atrack.maxcadence }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    {% if atrack.avgheartrate > 0 %}
+                    <td><b>Average&nbsp;heartrate</b></td>
+                    <td  style="text-align:right">{{ atrack.avgheartrate }}</td>
+                </tr>
+                {% endif %}
+                {% if atrack.minheartrate  < 999 %}
+                    <tr>
+                        <td><b>Mininimum&nbsp;heartrate</b></td>
+                        <td  style="text-align:right">{{ atrack.minheartrate }}</td>
+                    </tr>
+                {% endif %}
+                {% if atrack.maxheartrate  > 0 %}
+                    <tr>
+                        <td><b>Maximum&nbsp;heartrate</b></td>
+                        <td  style="text-align:right">{{ atrack.maxheartrate }}</td>
+                    </tr>
+                {% endif %}
+            </table>
+            <hr>
+            <table class="scalefont">
+                <tr>
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="Date_end" value="{{ date_end }}">
+                            <input type="hidden" name="Date_start" value="{{ date_start }}">
+                            <input type="hidden" name="Order" value="{{ order_selected }}">
+                            <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                            <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                            <input type="hidden" name="csvsave" value="True">
+                            <input type="submit" id="csvsave" value="Save as .csv file" class="save btn btn-default scalefont">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+            <table class="scalefont">
+                <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="Date_end" value="{{ date_end }}">
+                <input type="hidden" name="Date_start" value="{{ date_start }}">
+                <input type="hidden" name="Order" value="{{ order_selected }}">
+                <input type="hidden" name="Profile" value="{{ profile_filter }}">
+                <input type="hidden" name="Intermediate_points" value="{{ intermediate_points_selected }}">
+                <tr>
+                    <td>
+                        <input type="submit" id="delete" value="Delete this track" class="save btn btn-default scalefont">
+                    </td>
+                </tr>
+                <tr>
+                    <td><br><br>
+                        <label class="checkcontainer" style="font-weight: normal;"><i>I understand that deleting this track is an action that cannot be undone</i>
+                            <input type="checkbox"
+                                name="confirm_delete" 
+                                id="id_confirm_delete">
+                            <span class="checkmark"></span> 
+                        </label>
+                    </td>
+                </tr>
+                </form>
+            </table>
+            <hr>
+            <a href={{ public_url }} target="_blank"><b>Obtain a shareble link to this track</b></a>
+        </div>
+        <div class="col-9">
+                <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
