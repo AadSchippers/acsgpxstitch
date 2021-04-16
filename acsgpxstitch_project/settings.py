@@ -131,4 +131,16 @@ MAPS_ROOT = os.path.join(BASE_DIR, 'acsgpxstitch_app/static/maps')
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}
 
+# Folium map colours
+LINE_COLOR = "gray"
+
+MARKER_COLORS = [ 
+    "darkred",
+    "darkgreen",
+    "darkblue",
+    "cadetblue",
+    "purple",
+    "black",
+]
+
 from .config import *   # noqa

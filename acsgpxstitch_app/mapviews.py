@@ -77,56 +77,14 @@ def make_map(request, tracks, map_filename):
     sw = tuple([min_lat, min_lon])
     ne = tuple([max_lat, max_lon])
 
-    my_map.fit_bounds([sw, ne]) 
+    my_map.fit_bounds([sw, ne])
 
-    # start marker
-    tooltip_text = 'Start, click for details'
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
-    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    html = (
-        "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Start</h3>" +
-        "<table style='color: #700394; width: 100%; font-size: 0.85vw'><tr><td><b>Time</b></td>" +
-        # "<td style='text-align:right'>"+points_info[0][0]+"</td></tr>" +
-        "</table>"
-    )
-    popup = folium.Popup(html, max_width=300)
-    # folium.Marker(points[0], icon=folium.Icon(color='lightgray'), tooltip=tooltip, popup=popup).add_to(my_map)
+    i = 0
+    for track in tracks:
+        my_map = draw_map(request, my_map, track, settings.MARKER_COLORS[i], settings.MARKER_COLORS[i+1])
+        i += 1
 
-    # finish marker
-    tooltip_text = 'Finish, click for details'
-    # tooltip_style = 'color: #700394; font-size: 0.85vw'
-    # tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    # tx = datetime.strptime(points_info[-1][0], "%H:%M:%S")
-    # duration = tx - t0
-    # duration = points_info[-1][2]
-    # moving_duration = points_info[-1][3]
-    # avgspeed = float((points_info[-1][1] / moving_duration.seconds) * 3.6)
-    # distance = float(points_info[-1][1]) / 1000
-
-    '''
-    html = (
-        "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Finish</h3>"+
-        "<table style='color: #700394; width: 100%; font-size: 0.85vw'>" +
-        "<tr><td><b>Time</b></td><td style='text-align:right'>"+points_info[-1][0]+"</td></tr>" +
-        "<tr><td><b>Distance</b></td><td style='text-align:right'>"+str(round(distance, 2))+"</td></tr>" +
-        "<tr><td><b>Average speed</b></td><td style='text-align:right'>"+str(round(avgspeed, 2))+"</td></tr>" +
-        "<tr><td><b>Duration</b></td><td style='text-align:right'>"+str(duration)+"</td></tr>" +
-        "<tr><td><b>Duration while moving</b></td><td style='text-align:right'>"+str(moving_duration)+"</td></tr>" +
-        "</table>"
-    )
-    popup = folium.Popup(html, max_width=300)
-    '''
-    # folium.Marker(points[-1], icon=folium.Icon(color='gray'), tooltip=tooltip, popup=popup).add_to(my_map)
- 
-    # folium.LayerControl(collapsed=True).add_to(my_map)
-
-    # add lines
-    points = []
-    for t in tracks:
-        for p in t["points"]:
-            points.append(tuple([p[0], p[1]]))
-
-    folium.PolyLine(points, color="red", weight=2.5, opacity=1).add_to(my_map)
+    folium.LayerControl(collapsed=True).add_to(my_map)
 
     # Save map
     mapfilename = os.path.join(
@@ -136,6 +94,35 @@ def make_map(request, tracks, map_filename):
     my_map.save(mapfilename)
 
     return
+
+
+def draw_map(request, my_map, track, start_color, end_color): 
+    print("Filename: ", track["filename"], "start_color: ", start_color, "end_color: ", end_color)
+
+    points = []
+    if track["reversed"] == True:
+        for p in range(len(track["points"]), 0, -1):
+            points.append(tuple([track["points"][p-1][0], track["points"][p-1][1]]))
+    else:
+        for p in track["points"]:
+            points.append(tuple([p[0], p[1]]))
+
+    # start marker
+    tooltip_text = 'Start ' + track["filename"]
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+    folium.Marker(points[0], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
+
+    # finish marker
+    tooltip_text = 'Finish ' + track["filename"]
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+    folium.Marker(points[-1], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)
+ 
+    # add lines
+    folium.PolyLine(points, color=settings.LINE_COLOR, weight=3.5, opacity=1).add_to(my_map)
+
+    return my_map
 
 
 def download_gpx(request, trackname, points, points_info):
@@ -181,71 +168,3 @@ def calculate_using_haversine(point, previous_point):
 
     return distance
 
-
-def make_html_popup(
-        intermediate_point,
-        time,
-        duration,
-        moving_duration,
-        distance,
-        speed,
-        avgspeed,
-        heartrate,
-        avgheartrate,
-        cadence,
-        avgcadence,
-    ):
-    line_title = "<h3 style='color: #700394; font-weight: bold; font-size: 1.5vw'>Intermediate point "+ str(int(intermediate_point)/1000)+" km</h3>"
-    line_table_start = "<table style='color: #700394; font-size: 0.85vw'>"
-    line_table_end = "</table>"
-    line_time_distance = (
-        "<tr><td><b>Time</b></td><td style='padding: 0 10px;text-align:right'>" +
-        time+"</td>" +
-        "<td><b>Distance</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(round(distance/1000, 2)) + "</td></tr>"
-    )
-    line_duration = (
-        "<tr><td><b>Duration</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(duration)+"</td><td><b>Duration while moving</b></td><td style='padding: 0 10px;text-align:right'>"+
-        str(moving_duration)+"</td></tr>"
-    )
-    line_speed = (
-        "<tr><td><b>Current speed</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(speed)+"</td>" +
-        "<td><b>Average speed</b></td><td style='padding: 0 10px;text-align:right'>" +
-        str(round(avgspeed, 2)) +
-        "</td></tr>"
-    )
-    if heartrate:
-        line_heartrate = (
-            "<tr><td><b>Current heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
-            str(heartrate)+"</td>" +
-            "<td><b>Average heartrate</b></td><td style='padding: 0 10px;text-align:right'>" +
-            str(int(round(avgheartrate, 0))) +
-            "</td></tr>"
-        )
-    else:
-        line_heartrate = ""
-    if cadence:
-        line_cadence = (
-            "<tr><td><b>Current cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
-            str(round(cadence, 0)) +"</td>" +
-            "<td><b>Average cadence</b></td><td style='padding: 0 10px;text-align:right'>" +
-            str(int(round(avgcadence, 0))) +
-            "</td></tr>"
-        )
-    else:
-        line_cadence = ""
-
-    html_popup = (
-        line_title +
-        line_table_start +
-        line_time_distance +
-        line_duration +
-        line_speed +
-        line_heartrate +
-        line_cadence +
-        line_table_end
-    )
-
-    return html_popup
