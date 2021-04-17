@@ -9,140 +9,150 @@
     }
 </script>
     <div class="container">
-        <table class="scalefont" style="width:100%">
-            <tr>
-                <td>
-                    <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="file-field">
-                            <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Click to select one or more gpx files to upload</label>
-                            <div class="btn">
-                                <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
-                            </div>
-                            <div class="file-path-wrapper">
-                                <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
-                            </div>
-                            <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=this.form.submit()>2. Click to upload selected file(s)</label>
-                            <input type="submit" id="gpxload" style="display:none">
-                        </div>
-                    </form>
-                </td>
-            </tr>
-        </table>
+        <div class="row">
+            <div class="col-4">
+                <table class="scalefont" style="width:100%">
+                    <tr>
+                        <td>
+                            <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="file-field">
+                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Click to select one or more gpx files to upload</label>
+                                    <div class="btn">
+                                        <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
+                                    </div>
+                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=this.form.submit()>2. Click to upload selected file(s)</label>
+                                    <input type="submit" id="gpxload" style="display:none">
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
         <hr>
         <div class="row">
             <div class="col-3">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
-                        <thead>
-                            <th>Filename</th>
-                            <th>Length (km)</th>
-                            <th>Begin</th>
-                            <th>End</th>
-                            <th>Reversed</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            {% if tracks.0.filename %}
-                                <td>{{ tracks.0.filename }}</td>
-                                <td style="text-align:right;">{{ tracks.0.distance }}</td>
-                                <td><img src="/static/img/marker_darkred.png"style="width:26px;height:35px;"></td>
-                                <td><img src="/static/img/marker_darkgreen.png"style="width:26px;height:35px;"></td>
-                                <td>
-                                    <label class="checkcontainer">
-                                        <input type="checkbox"
-                                            name="reverse_track0" 
-                                            {% if tracks.0.reversed %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_reverse_track0">
-                                        <span class="checkmark"></span> 
-                                    </label>
-                                </td>
-                            {% endif %}
+                <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+                    <thead>
+                        <th>Filename</th>
+                        <th>Length (km)</th>
+                        <th>Reversed</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        {% if tracks.0.filename %}
+                            <td>{{ tracks.0.filename }}</td>
+                            <td style="text-align:right;">{{ tracks.0.distance }}</td>
+                            <td>
+                                <label class="checkcontainer">
+                                    <input type="checkbox"
+                                        name="reverse_track0" 
+                                        {% if tracks.0.reversed %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_reverse_track0">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                        {% endif %}
                         </tr>
                         <tr>
-                            {% if tracks.1.filename %}
-                                <td>{{ tracks.1.filename }}</td>
-                                <td style="text-align:right;">{{ tracks.1.distance }}</td>
-                                <td><img src="/static/img/marker_darkgreen.png"style="width:26px;height:35px;"></td>
-                                <td><img src="/static/img/marker_darkblue.png"style="width:26px;height:35px;"></td>
-                                <td>
-                                    <label class="checkcontainer">
-                                        <input type="checkbox"
-                                            name="reverse_track1" 
-                                            {% if tracks.1.reversed %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_reverse_track1">
-                                        <span class="checkmark"></span> 
-                                    </label>
-                                </td>
-                            {% endif %}
+                        {% if tracks.1.filename %}
+                            <td>{{ tracks.1.filename }}</td>
+                            <td style="text-align:right;">{{ tracks.1.distance }}</td>
+                            <td>
+                                <label class="checkcontainer">
+                                    <input type="checkbox"
+                                        name="reverse_track1" 
+                                        {% if tracks.1.reversed %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_reverse_track1">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                        {% endif %}
                         </tr>
                         <tr>
-                            {% if tracks.2.filename %}
-                                <td>{{ tracks.2.filename }}</td>
-                                <td style="text-align:right;">{{ tracks.2.distance }}</td>
-                                <td><img src="/static/img/marker_darkblue.png"style="width:26px;height:35px;"></td>
-                                <td><img src="/static/img/marker_cadetblue.png"style="width:26px;height:35px;"></td>
-                                <td>
-                                    <label class="checkcontainer">
-                                        <input type="checkbox"
-                                            name="reverse_track2" 
-                                            {% if tracks.2.reversed %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_reverse_track2">
-                                        <span class="checkmark"></span> 
-                                    </label>
-                                </td>
-                            {% endif %}
+                        {% if tracks.2.filename %}
+                            <td>{{ tracks.2.filename }}</td>
+                            <td style="text-align:right;">{{ tracks.2.distance }}</td>
+                            <td>
+                                <label class="checkcontainer">
+                                    <input type="checkbox"
+                                        name="reverse_track2" 
+                                        {% if tracks.2.reversed %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_reverse_track2">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                        {% endif %}
                         </tr>
                         <tr>
-                            {% if tracks.3.filename %}
-                                <td>{{ tracks.3.filename }}</td>
-                                <td style="text-align:right;">{{ tracks.3.distance }}</td>
-                                <td><img src="/static/img/marker_cadetblue.png"style="width:26px;height:35px;"></td>
-                                <td><img src="/static/img/marker_purple.png"style="width:26px;height:35px;"></td>
-                                <td>
-                                    <label class="checkcontainer">
-                                        <input type="checkbox"
-                                            name="reverse_track3" 
-                                            {% if tracks.3.reversed %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_reverse_track3">
-                                        <span class="checkmark"></span> 
-                                    </label>
-                                </td>
-                            {% endif %}
+                        {% if tracks.3.filename %}
+                            <td>{{ tracks.3.filename }}</td>
+                            <td style="text-align:right;">{{ tracks.3.distance }}</td>
+                            <td>
+                                <label class="checkcontainer">
+                                    <input type="checkbox"
+                                        name="reverse_track3" 
+                                        {% if tracks.3.reversed %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_reverse_track3">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                        {% endif %}
                         </tr>
                         <tr>
-                            {% if tracks.4.filename %}
-                                <td>{{ tracks.4.filename }}</td>
-                                <td style="text-align:right;">{{ tracks.4.distance }}</td>
-                                <td><img src="/static/img/marker_purple.png"style="width:26px;height:35px;"></td>
-                                <td><img src="/static/img/marker_black.png"style="width:26px;height:35px;"></td>
-                                <td>
-                                    <label class="checkcontainer">
-                                        <input type="checkbox"
-                                            name="reverse_track4" 
-                                            {% if tracks.4.reversed %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_reverse_track4">
-                                        <span class="checkmark"></span> 
-                                    </label>
-                                </td>
-                            {% endif %}
+                        {% if tracks.4.filename %}
+                            <td>{{ tracks.4.filename }}</td>
+                            <td style="text-align:right;">{{ tracks.4.distance }}</td>
+                            <td>
+                                <label class="checkcontainer">
+                                    <input type="checkbox"
+                                        name="reverse_track4" 
+                                        {% if tracks.4.reversed %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_reverse_track4">
+                                    <span class="checkmark"></span> 
+                                </label>
+                            </td>
+                        {% endif %}
+                        </tr>
+                        <tr>
+                            <td><b>Total:</b></td>
+                            <td style="text-align:right;"><b>{{ total_distance }}</b></td>
                         </tr>
                     </tbody>
                 </table>
-                <button type="submit" class="save btn btn-default scalefont"  onclick=procesFiles()>Show on map</button>
-            </form>
-            <hr>
+                <hr>
+                <table class="scalefont">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="tracks" value="{{ tracks }}">
+                        <input type="hidden" name="gpxdownload" value="True">
+                        <tr>
+                            <td>
+                                <b>Track name </b><input type="text" name="trackname">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br><input type="submit" id="gpxdownload" value="Download .gpx file" class="save btn btn-default scalefont">
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+    
             </div>
             <div class="col-9">
                 <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>

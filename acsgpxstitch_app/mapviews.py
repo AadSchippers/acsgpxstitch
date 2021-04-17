@@ -30,20 +30,59 @@ def process_gpx_file(request, file, atrack):
         for segment in track.segments:
             for point in segment.points:
 
-                point_distance = calculate_using_haversine(point, previous_point)
-                distance += point_distance
-
-                previous_point = point
-
                 points.append(tuple([point.latitude,
                                     point.longitude,
                                     point.elevation,
                                     ]))
 
+                point_distance = calculate_using_haversine(points[len(points)-1], previous_point)
+                distance += point_distance
+
+                previous_point = points[len(points)-1]
+
         atrack["distance"] = round(distance/1000, 2)
         atrack["points"] = points
 
     return atrack
+
+
+def order_tracks(request, tracks):
+    number_of_tracks = len(tracks)
+    ordered_tracks = []
+    ordered_tracks.append(tracks.pop(0))
+
+    while len(ordered_tracks) < number_of_tracks:
+        i = 0
+        last_track = ordered_tracks[len(ordered_tracks)-1]
+        previous_point = last_track["points"][len(last_track["points"])-1]
+        point_distance = 9999999999
+        points_reversed = False 
+        ti = 0
+        for t in tracks:
+            print("first: ", t["points"][0], " last: ", t["points"][len(t["points"])-1])
+            point_first = t["points"][0]
+            point_last = t["points"][len(t["points"])-1]
+            point_distance_first = calculate_using_haversine(point_first, previous_point)
+            point_distance_last = calculate_using_haversine(point_last, previous_point)
+            if point_distance_last < point_distance_first:
+                if point_distance_last < point_distance:
+                    t["points"].reverse()
+                    points_reversed = True
+                    point_distance = point_distance_last
+                    tpop = ti
+            elif point_distance_first < point_distance:
+                points_reversed = False
+                point_distance = point_distance_first
+                tpop = ti
+
+            ti += 1
+        ordered_tracks.append(tracks.pop(tpop))
+        ordered_tracks[len(ordered_tracks) - 1]["reversed"] = points_reversed
+        if points_reversed:
+            ordered_tracks[len(ordered_tracks) - 1]["points"].reverse()
+        i += 1
+
+    return ordered_tracks
 
 
 def make_map(request, tracks, map_filename):
@@ -81,7 +120,15 @@ def make_map(request, tracks, map_filename):
 
     i = 0
     for track in tracks:
-        my_map = draw_map(request, my_map, track, settings.MARKER_COLORS[i], settings.MARKER_COLORS[i+1])
+        if i == 0:
+            start_color = settings.START_COLOR
+        else:
+            start_color = settings.MARKER_COLOR
+        if i == (len(tracks) - 1):
+            end_color = settings.END_COLOR
+        else:
+            end_color = settings.MARKER_COLOR
+        my_map = draw_map(request, my_map, track, start_color, end_color)
         i += 1
 
     folium.LayerControl(collapsed=True).add_to(my_map)
@@ -97,15 +144,9 @@ def make_map(request, tracks, map_filename):
 
 
 def draw_map(request, my_map, track, start_color, end_color): 
-    print("Filename: ", track["filename"], "start_color: ", start_color, "end_color: ", end_color)
-
     points = []
-    if track["reversed"] == True:
-        for p in range(len(track["points"]), 0, -1):
-            points.append(tuple([track["points"][p-1][0], track["points"][p-1][1]]))
-    else:
-        for p in track["points"]:
-            points.append(tuple([p[0], p[1]]))
+    for p in track["points"]:
+        points.append(tuple([p[0], p[1]]))
 
     # start marker
     tooltip_text = 'Start ' + track["filename"]
@@ -120,16 +161,16 @@ def draw_map(request, my_map, track, start_color, end_color):
     folium.Marker(points[-1], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)
  
     # add lines
-    folium.PolyLine(points, color=settings.LINE_COLOR, weight=3.5, opacity=1).add_to(my_map)
+    folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
 
     return my_map
 
 
-def download_gpx(request, trackname, points, points_info):
+def download_gpx(request, trackname, tracks):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     gpxfilename = trackname+".gpx"
-    response['Content-Disposition'] = 'attachment; filename="'+gpxfilename+'"'
+    response['Content-Disposition'] = 'attachment; filename="'+trackname+'.gpx'+'"'
 
     writer = csv.writer(response)
 
@@ -142,16 +183,19 @@ def download_gpx(request, trackname, points, points_info):
         ])
     writer.writerow([str("  <trk>")])
     writer.writerow([str("    <name>"+trackname+"</name>")])
-    writer.writerow([str("    <trkseg>")])
 
-    row = 0
-    while row < len(points):
-        writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
-        writer.writerow([str("        <ele>"+str(round(points_info[row][9], 2))+"</ele>")])
-        writer.writerow([str("      </trkpt>")])
-        row += 1
+    for t in tracks:
+        writer.writerow([str("    <trkseg>")])
+        points = t["points"]
+        row = 0
+        while row < len(points):
+            writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
+            writer.writerow([str("        <ele>"+str(points[row][2])+"</ele>")])
+            writer.writerow([str("      </trkpt>")])
+            row += 1
 
-    writer.writerow([str("    </trkseg>")])
+        writer.writerow([str("    </trkseg>")])
+
     writer.writerow([str("  </trk>")])
     writer.writerow([str("</gpx>")])
 
@@ -162,8 +206,8 @@ def calculate_using_haversine(point, previous_point):
     distance = float(0.00)
 
     if previous_point:
-        previous_location = (previous_point.latitude, previous_point.longitude)
-        current_location = (point.latitude, point.longitude)
+        previous_location = (previous_point[0], previous_point[1])
+        current_location = (point[0], point[1])
         distance = haversine(current_location, previous_location, unit='m')
 
     return distance

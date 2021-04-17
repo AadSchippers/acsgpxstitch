@@ -132,15 +132,9 @@ NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}
 
 # Folium map colours
-LINE_COLOR = "gray"
-
-MARKER_COLORS = [ 
-    "darkred",
-    "darkgreen",
-    "darkblue",
-    "cadetblue",
-    "purple",
-    "black",
-]
+LINE_COLOR = "red"
+MARKER_COLOR = 'purple'
+START_COLOR = "pink"
+END_COLOR = "darkpurple"
 
 from .config import *   # noqa

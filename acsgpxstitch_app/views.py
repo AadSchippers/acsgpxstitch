@@ -14,10 +14,12 @@ import time
 from .mapviews import *
 import re
 import hashlib
+import ast
 
 
 def track_list(request):   
-    map_filename = "acsgpxstitch.html"
+    map_filename = "acsgpxstitch.html"  
+    gpxdownload = None
 
     try:
         if not tracks:
@@ -40,10 +42,26 @@ def track_list(request):
             if i >= 5:
                 break
 
+        gpxdownload = request.POST.get('gpxdownload')
+        trackname = request.POST.get('trackname')
+        if not tracks:
+            tracks = ast.literal_eval(request.POST.get('tracks'))
+
+
+    if gpxdownload == 'True':
+        return download_gpx(request, trackname, tracks)
+    
+        tracks = order_tracks(request, tracks)
+
         make_map(request, tracks, map_filename)
+    
+    total_distance = 0
+    for t in tracks:
+        total_distance += t["distance"]
 
     return render(request, 'acsgpxstitch_app/track_list.html', {
         "tracks": tracks,
+        "total_distance": total_distance,
         "map_filename": "/static/maps/" + map_filename,
         }
     )
