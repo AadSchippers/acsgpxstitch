@@ -27,6 +27,17 @@
                                     <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=this.form.submit()>2. Click to upload selected file(s)</label>
                                     <input type="submit" id="gpxload" style="display:none">
                                 </div>
+                                <br>
+                                <label class="checkcontainer">
+                                    <b>Use Intelligent Stitch </b>
+                                    <input type="checkbox"
+                                        name="intelligent_stitch"
+                                        {% if intelligent_stitch %}
+                                            checked="checked" 
+                                        {% endif %}
+                                        id="id_intelligent_stitch">
+                                    <span class="checkmark"></span> 
+                                </label>
                             </form>
                         </td>
                     </tr>
@@ -135,27 +146,37 @@
                     </tbody>
                 </table>
                 <hr>
-                <table class="scalefont">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" name="tracks" value="{{ tracks }}">
-                        <input type="hidden" name="gpxdownload" value="True">
-                        <tr>
-                            <td>
-                                <b>Track name </b><input type="text" name="trackname">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <br><input type="submit" id="gpxdownload" value="Download .gpx file" class="save btn btn-default scalefont">
-                            </td>
-                        </tr>
-                    </form>
-                </table>
-    
+                {% if tracks.1.filename %}
+                    <table class="scalefont">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="tracks" value="{{ tracks }}">
+                            <input type="hidden" name="intelligent_stitch" value="{{ intelligent_stitch }}">
+                            <input type="hidden" name="gpxdownload" value="True">
+                            <tr>
+                                <td>
+                                    <b>Track name </b><input type="text" name="trackname">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <br><input type="submit" id="gpxdownload" value="Download .gpx file" class="save btn btn-default scalefont">
+                                </td>
+                            </tr>
+                        </form>
+                    </table>
+                {% endif %}
             </div>
             <div class="col-9">
-                <iframe class="responsive-iframe" src={{ map_filename }} title="Track map"></iframe>
+                {% if tracks.0.filename %}
+                    <iframe class="responsive-iframe" id="map_frame" src={{ map_filename }} title="Track map"></iframe>
+                    <script type=”text/javascript”>
+                        var i = 1 + Math.round(Math.random()*(2));
+                        document.getElementById('map_frame').src=’panel_’+i+’.html’
+                        </script>                
+                {% else %}
+                    <iframe class="responsive-iframe" src={{ basemap_filename }} title="Track map"></iframe>
+                {% endif %}
             </div>
         </div>
     </div>    

@@ -18,8 +18,10 @@ import ast
 
 
 def track_list(request):   
-    map_filename = "acsgpxstitch.html"  
+    map_filename = settings.TRACK_MAP
+    basemap_filename = settings.BASE_MAP 
     gpxdownload = None
+    intelligent_stitch = None
 
     try:
         if not tracks:
@@ -47,11 +49,12 @@ def track_list(request):
         if not tracks:
             tracks = ast.literal_eval(request.POST.get('tracks'))
 
-
-    if gpxdownload == 'True':
-        return download_gpx(request, trackname, tracks)
+        if gpxdownload == 'True':
+            return download_gpx(request, trackname, tracks)
     
-        tracks = order_tracks(request, tracks)
+        intelligent_stitch = request.POST.get('intelligent_stitch')
+        if intelligent_stitch:
+            tracks = order_tracks(request, tracks)
 
         make_map(request, tracks, map_filename)
     
@@ -61,8 +64,10 @@ def track_list(request):
 
     return render(request, 'acsgpxstitch_app/track_list.html', {
         "tracks": tracks,
+        "intelligent_stitch": intelligent_stitch,
         "total_distance": total_distance,
         "map_filename": "/static/maps/" + map_filename,
+        "basemap_filename": "/static/maps/" + basemap_filename,
         }
     )
 

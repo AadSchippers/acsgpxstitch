@@ -131,6 +131,10 @@ MAPS_ROOT = os.path.join(BASE_DIR, 'acsgpxstitch_app/static/maps')
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
 GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}
 
+# Folium maps
+TRACK_MAP = "acsgpxstitch.html" 
+BASE_MAP = "acsgpxstitch_base.html" 
+
 # Folium map colours
 LINE_COLOR = "red"
 MARKER_COLOR = 'purple'
