@@ -12,15 +12,17 @@
     </head>
     <body>
         <div class="detail">     
-            <table style="width:100%">
-                <tr>
-                    <td><a href="{% url 'track_list' %}"><h1 style="font-size: 2.5vw; font-weight: 500;">AcsGPXStitch</h1></a></td>
-                </tr>
-            </table>
-            <br><br>
+            <div class="row">     
+                <table style="width:100%">
+                    <tr>
+                        <td><a href="{% url 'track_list' %}"><h1 style="font-size: 2.5vw; font-weight: 500;">AcsGPXStitch</h1></a></td>
+                    </tr>
+                </table>
+                <br><br>
+            </div>
             {% block content %}
             {% endblock %}
-    </div>
+        </div>
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
     <script src={% static 'js/acsgpxstitch.js' %}></script>

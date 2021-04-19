@@ -3,9 +3,9 @@
 {% block content %}
 <script>
     function procesFiles() {
-    document.getElementById("id-processing-p").style.visibility = "visible";
-    document.getElementById("id-processing-img").style.visibility = "visible";
-    document.getElementById("uploadform").submit();
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
+        document.getElementById("uploadform").submit();
     }
 </script>
     <div class="container">
@@ -24,7 +24,7 @@
                                     <div class="file-path-wrapper">
                                         <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
                                     </div>
-                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=this.form.submit()>2. Click to upload selected file(s)</label>
+                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to upload selected file(s)</label>
                                     <input type="submit" id="gpxload" style="display:none">
                                 </div>
                                 <br>
@@ -42,6 +42,10 @@
                         </td>
                     </tr>
                 </table>
+            </div>
+            <div class="col-4">
+                <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
+                <img id="id-processing-img" style="float:right; width:135px; height:112px;visibility: hidden;" src="/static/img/acstracks-progress.gif">
             </div>
         </div>
         <hr>
@@ -65,7 +69,8 @@
                                         {% if tracks.0.reversed %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_reverse_track0">
+                                        id="id_reverse_track0"
+                                        disabled="disabled">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -82,7 +87,8 @@
                                         {% if tracks.1.reversed %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_reverse_track1">
+                                        id="id_reverse_track1"
+                                        disabled="disabled">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -99,7 +105,8 @@
                                         {% if tracks.2.reversed %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_reverse_track2">
+                                        id="id_reverse_track2"
+                                        disabled="disabled">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -116,7 +123,8 @@
                                         {% if tracks.3.reversed %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_reverse_track3">
+                                        id="id_reverse_track3"
+                                        disabled="disabled">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
@@ -133,7 +141,8 @@
                                         {% if tracks.4.reversed %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_reverse_track4">
+                                        id="id_reverse_track4"
+                                        disabled="disabled">
                                     <span class="checkmark"></span> 
                                 </label>
                             </td>
