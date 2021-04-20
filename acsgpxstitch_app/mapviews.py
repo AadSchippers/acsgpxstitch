@@ -117,6 +117,14 @@ def make_map(request, tracks, map_filename):
 
     my_map.fit_bounds([sw, ne])
 
+    points = []
+    for track in tracks:
+        for p in track["points"]:
+            points.append(tuple([p[0], p[1]]))
+
+    # add lines
+    folium.PolyLine(points, color=settings.CONNECT_COLOR , weight=2.5, opacity=1).add_to(my_map)
+
     i = 0
     for track in tracks:
         if i == 0:

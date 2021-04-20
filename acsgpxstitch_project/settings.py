@@ -140,5 +140,6 @@ LINE_COLOR = "red"
 MARKER_COLOR = 'purple'
 START_COLOR = "pink"
 END_COLOR = "darkpurple"
+CONNECT_COLOR="darkred"
 
 from .config import *   # noqa
