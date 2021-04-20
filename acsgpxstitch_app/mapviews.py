@@ -81,13 +81,6 @@ def order_tracks(request, tracks):
 
         i += 1
 
-    print(
-        "OT filename: :", ordered_tracks[1]["filename"],
-        "OT reversed", ordered_tracks[1]["reversed"],
-        "OT first point: ", ordered_tracks[1]["points"][0],
-        "OT last point", ordered_tracks[1]["points"][len(ordered_tracks[1]["points"])-1]
-        )
-
     return ordered_tracks
 
 
