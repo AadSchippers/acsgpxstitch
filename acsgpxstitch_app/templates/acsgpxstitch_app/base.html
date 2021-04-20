@@ -2,30 +2,39 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
         <title>AcsGPXStitch</title>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{% static 'css/acsgpxstitch.css' %}">
+
     </head>
     <body>
         <div class="detail">     
-            <div class="row">     
-                <table style="width:100%">
-                    <tr>
-                        <td><a href="{% url 'track_list' %}"><h1 style="font-size: 2.5vw; font-weight: 500;">AcsGPXStitch</h1></a></td>
-                    </tr>
-                </table>
-                <br><br>
-            </div>
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <a href="{% url 'track_list'  %}"><h1 style="font-size: 2.5vw; font-weight: 500;">AcsGPXStitch</h1></a>
+                    </td>
+                </tr>
+            </table>
+            <br><br>
             {% block content %}
             {% endblock %}
-        </div>
+    </div>
     <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
     <script src={% static 'js/acsgpxstitch.js' %}></script>
+    <script src={% static 'js/pleasewait.js' %}></script>
 
 </body>
 </html>

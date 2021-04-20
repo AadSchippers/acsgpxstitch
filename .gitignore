@@ -7,5 +7,4 @@ db.sqlite3
 /static
 .DS_Store
 /media
-/acsgpxstitch_app/static/maps/
 log.txt
