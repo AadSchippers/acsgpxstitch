@@ -5,6 +5,7 @@ __pycache__
 db.sqlite3
 /acsgpxstitch_project/config.py
 /static
+/acsgpxstitch_app/static/maps/acsgpxstitch.html
 .DS_Store
 /media
 log.txt
