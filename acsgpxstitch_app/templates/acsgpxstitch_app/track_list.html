@@ -10,24 +10,24 @@
 </script>
     <div class="container">
         <div class="row">
-            <div class="col-4">
+            <div class="col-3">
                 <table class="scalefont" style="width:100%">
                     <tr>
                         <td>
                             <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="file-field">
-                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Click to select one or more gpx files to upload</label>
+                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Select up to five gpx files to stitch together</label>
                                     <div class="btn">
                                         <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
                                     </div>
-                                    <div class="file-path-wrapper">
-                                        <input class="gpxfilepath file-path validate" type="text" value="{{ gpxfilenames }}">
+                                    <div class="gpxfilepath file-path-wrapper">
+                                        <input class="gpxfilepath file-path validate" type="text">
                                     </div>
-                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to upload selected file(s)</label>
+                                    <br>
+                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to stitch selected file(s)</label>
                                     <input type="submit" id="gpxload" style="display:none">
                                 </div>
-                                <br>
                                 <label class="checkcontainer">
                                     <b>Use Intelligent Stitch </b>
                                     <input type="checkbox"
@@ -42,15 +42,7 @@
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div class="col-4">
-                <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
-                <img id="id-processing-img" style="float:right; width:135px; height:112px;visibility: hidden;" src="/static/img/acstracks-progress.gif">
-            </div>
-        </div>
         <hr>
-        <div class="row">
-            <div class="col-3">
                 <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
                     <thead>
                         <th>Filename</th>
@@ -164,7 +156,7 @@
                             <input type="hidden" name="gpxdownload" value="True">
                             <tr>
                                 <td>
-                                    <b>Track name </b><input type="text" name="trackname">
+                                    <b>Track name </b><input type="text" name="trackname" placeholder="{{ tracks.0.trackname }}">
                                 </td>
                             </tr>
                             <tr>
@@ -175,6 +167,8 @@
                         </form>
                     </table>
                 {% endif %}
+                    <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
+                    <img id="id-processing-img" style="float:right; width:135px; height:112px;visibility: hidden;" src="/static/img/acstracks-progress.gif">    
             </div>
             <div class="col-9">
                 {% if tracks.0.filename %}

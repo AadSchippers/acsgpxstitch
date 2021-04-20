@@ -8,3 +8,4 @@ db.sqlite3
 .DS_Store
 /media
 /acsgpxstitch_app/static/maps/
+log.txt

@@ -47,7 +47,10 @@ def track_list(request):
         gpxdownload = request.POST.get('gpxdownload')
         trackname = request.POST.get('trackname')
         if not tracks:
-            tracks = ast.literal_eval(request.POST.get('tracks'))
+            try:
+                tracks = ast.literal_eval(request.POST.get('tracks'))
+            except:
+                return redirect('track_list')
 
         if gpxdownload == 'True':
             return download_gpx(request, trackname, tracks)

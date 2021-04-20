@@ -26,7 +26,9 @@ def process_gpx_file(request, file, atrack):
     timezone_info = timezone(settings.TIME_ZONE)   
     previous_point = None
     distance = 0
+    trackname = ""
     for track in gpx.tracks:
+        trackname = track.name
         for segment in track.segments:
             for point in segment.points:
 
@@ -40,6 +42,7 @@ def process_gpx_file(request, file, atrack):
 
                 previous_point = points[len(points)-1]
 
+        atrack["trackname"] = trackname
         atrack["distance"] = round(distance/1000, 2)
         atrack["points"] = points
 
@@ -56,10 +59,8 @@ def order_tracks(request, tracks):
         last_track = ordered_tracks[len(ordered_tracks)-1]
         previous_point = last_track["points"][len(last_track["points"])-1]
         point_distance = 9999999999
-        points_reversed = False 
         ti = 0
         for t in tracks:
-            print("first: ", t["points"][0], " last: ", t["points"][len(t["points"])-1])
             point_first = t["points"][0]
             point_last = t["points"][len(t["points"])-1]
             point_distance_first = calculate_using_haversine(point_first, previous_point)
@@ -67,20 +68,25 @@ def order_tracks(request, tracks):
             if point_distance_last < point_distance_first:
                 if point_distance_last < point_distance:
                     t["points"].reverse()
-                    points_reversed = True
+                    t["reversed"] = True
                     point_distance = point_distance_last
                     tpop = ti
             elif point_distance_first < point_distance:
-                points_reversed = False
+                t["reversed"] = False
                 point_distance = point_distance_first
                 tpop = ti
 
             ti += 1
         ordered_tracks.append(tracks.pop(tpop))
-        ordered_tracks[len(ordered_tracks) - 1]["reversed"] = points_reversed
-        if points_reversed:
-            ordered_tracks[len(ordered_tracks) - 1]["points"].reverse()
+
         i += 1
+
+    print(
+        "OT filename: :", ordered_tracks[1]["filename"],
+        "OT reversed", ordered_tracks[1]["reversed"],
+        "OT first point: ", ordered_tracks[1]["points"][0],
+        "OT last point", ordered_tracks[1]["points"][len(ordered_tracks[1]["points"])-1]
+        )
 
     return ordered_tracks
 
@@ -169,6 +175,8 @@ def draw_map(request, my_map, track, start_color, end_color):
 def download_gpx(request, trackname, tracks):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
+    if not trackname:
+        trackname = tracks[0]["trackname"]
     gpxfilename = trackname+".gpx"
     response['Content-Disposition'] = 'attachment; filename="'+trackname+'.gpx'+'"'
 
