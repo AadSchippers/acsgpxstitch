@@ -36,8 +36,10 @@
                                         {% if intelligent_stitch %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_intelligent_stitch"
-                                        onchange=procesFiles()>
+                                        {% if tracks.1.filename %}
+                                            onchange=procesFiles()
+                                        {% endif %}
+                                        id="id_intelligent_stitch">
                                     <span class="checkmark"></span> 
                                 </label>
                             </form>
