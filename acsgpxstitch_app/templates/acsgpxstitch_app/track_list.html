@@ -16,8 +16,9 @@
                         <td>
                             <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
                                 {% csrf_token %}
+                                <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                                 <div class="file-field">
-                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Select up to five gpx files to stitch together</label>
+                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Select GPX files to stitch together</label>
                                     <div class="btn">
                                         <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
                                     </div>
@@ -25,7 +26,7 @@
                                         <input class="gpxfilepath file-path validate" type="text">
                                     </div>
                                     <br>
-                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to stitch selected file(s)</label>
+                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to stitch selected files</label>
                                     <input type="submit" id="gpxload" style="display:none">
                                 </div>
                                 <label class="checkcontainer">
@@ -35,7 +36,8 @@
                                         {% if intelligent_stitch %}
                                             checked="checked" 
                                         {% endif %}
-                                        id="id_intelligent_stitch">
+                                        id="id_intelligent_stitch"
+                                        onchange=procesFiles()>
                                     <span class="checkmark"></span> 
                                 </label>
                             </form>
@@ -50,96 +52,26 @@
                         <th>Reversed</th>
                     </thead>
                     <tbody>
-                        <tr>
-                        {% if tracks.0.filename %}
-                            <td>{{ tracks.0.filename }}</td>
-                            <td style="text-align:right;">{{ tracks.0.distance }}</td>
-                            <td>
-                                <label class="checkcontainer">
-                                    <input type="checkbox"
-                                        name="reverse_track0" 
-                                        {% if tracks.0.reversed %}
-                                            checked="checked" 
-                                        {% endif %}
-                                        id="id_reverse_track0"
-                                        disabled="disabled">
-                                    <span class="checkmark"></span> 
-                                </label>
-                            </td>
-                        {% endif %}
-                        </tr>
-                        <tr>
-                        {% if tracks.1.filename %}
-                            <td>{{ tracks.1.filename }}</td>
-                            <td style="text-align:right;">{{ tracks.1.distance }}</td>
-                            <td>
-                                <label class="checkcontainer">
-                                    <input type="checkbox"
-                                        name="reverse_track1" 
-                                        {% if tracks.1.reversed %}
-                                            checked="checked" 
-                                        {% endif %}
-                                        id="id_reverse_track1"
-                                        disabled="disabled">
-                                    <span class="checkmark"></span> 
-                                </label>
-                            </td>
-                        {% endif %}
-                        </tr>
-                        <tr>
-                        {% if tracks.2.filename %}
-                            <td>{{ tracks.2.filename }}</td>
-                            <td style="text-align:right;">{{ tracks.2.distance }}</td>
-                            <td>
-                                <label class="checkcontainer">
-                                    <input type="checkbox"
-                                        name="reverse_track2" 
-                                        {% if tracks.2.reversed %}
-                                            checked="checked" 
-                                        {% endif %}
-                                        id="id_reverse_track2"
-                                        disabled="disabled">
-                                    <span class="checkmark"></span> 
-                                </label>
-                            </td>
-                        {% endif %}
-                        </tr>
-                        <tr>
-                        {% if tracks.3.filename %}
-                            <td>{{ tracks.3.filename }}</td>
-                            <td style="text-align:right;">{{ tracks.3.distance }}</td>
-                            <td>
-                                <label class="checkcontainer">
-                                    <input type="checkbox"
-                                        name="reverse_track3" 
-                                        {% if tracks.3.reversed %}
-                                            checked="checked" 
-                                        {% endif %}
-                                        id="id_reverse_track3"
-                                        disabled="disabled">
-                                    <span class="checkmark"></span> 
-                                </label>
-                            </td>
-                        {% endif %}
-                        </tr>
-                        <tr>
-                        {% if tracks.4.filename %}
-                            <td>{{ tracks.4.filename }}</td>
-                            <td style="text-align:right;">{{ tracks.4.distance }}</td>
-                            <td>
-                                <label class="checkcontainer">
-                                    <input type="checkbox"
-                                        name="reverse_track4" 
-                                        {% if tracks.4.reversed %}
-                                            checked="checked" 
-                                        {% endif %}
-                                        id="id_reverse_track4"
-                                        disabled="disabled">
-                                    <span class="checkmark"></span> 
-                                </label>
-                            </td>
-                        {% endif %}
-                        </tr>
+                        {% for track in tracks %}
+                            <tr>
+                                {% if track.filename %}
+                                <td>{{ track.filename }}</td>
+                                <td style="text-align:right;">{{ track.distance }}</td>
+                                <td>
+                                    <label class="checkcontainer">
+                                        <input type="checkbox"
+                                            name="reverse_track" 
+                                            {% if track.reversed %}
+                                                checked="checked" 
+                                            {% endif %}
+                                            id="id_reverse_track"
+                                            disabled="disabled">
+                                        <span class="checkmark"></span> 
+                                    </label>
+                                </td>
+                            {% endif %}
+                            </tr>
+                        {% endfor %}
                         <tr>
                             <td><b>Total:</b></td>
                             <td style="text-align:right;"><b>{{ total_distance }}</b></td>
@@ -152,6 +84,7 @@
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <input type="hidden" name="tracks" value="{{ tracks }}">
+                            <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                             <input type="hidden" name="intelligent_stitch" value="{{ intelligent_stitch }}">
                             <input type="hidden" name="gpxdownload" value="True">
                             <tr>

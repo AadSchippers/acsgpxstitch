@@ -13,6 +13,7 @@ from haversine import haversine, Unit
 import csv
 from django.http import HttpResponse
 import io
+import copy
 
 
 def process_gpx_file(request, file, atrack):
@@ -49,7 +50,8 @@ def process_gpx_file(request, file, atrack):
     return atrack
 
 
-def order_tracks(request, tracks):
+def order_tracks(request, original_tracks):
+    tracks = copy.deepcopy(original_tracks)
     number_of_tracks = len(tracks)
     ordered_tracks = []
     ordered_tracks.append(tracks.pop(0))

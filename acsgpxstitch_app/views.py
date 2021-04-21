@@ -28,27 +28,34 @@ def track_list(request):
             tracks = []
     except:
         tracks = []
+    try:
+        if not original_tracks:
+            try:
+                original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
+            except:
+                original_tracks = []
+    except:
+        original_tracks = []
 
     if request.method == 'POST':
         files = request.FILES.getlist('gpxfile')
-        tracks = []
+        if files:
+            original_tracks = []
         i = 0
         for file in files:
-            tracks.append({
+            original_tracks.append({
                 "filename": file.name,
                 "distance": 0,
                 "reversed": False
             })
-            tracks[i] = process_gpx_file(request, file, tracks[i])
+            original_tracks[i] = process_gpx_file(request, file, original_tracks[i])
             i += 1
-            if i >= 5:
-                break
 
         gpxdownload = request.POST.get('gpxdownload')
         trackname = request.POST.get('trackname')
-        if not tracks:
+        if not original_tracks:
             try:
-                tracks = ast.literal_eval(request.POST.get('tracks'))
+                original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
             except:
                 return redirect('track_list')
 
@@ -57,7 +64,9 @@ def track_list(request):
     
         intelligent_stitch = request.POST.get('intelligent_stitch')
         if intelligent_stitch:
-            tracks = order_tracks(request, tracks)
+            tracks = order_tracks(request, original_tracks)
+        else:
+            tracks = original_tracks.copy()
 
         make_map(request, tracks, map_filename)
     
@@ -67,8 +76,9 @@ def track_list(request):
 
     return render(request, 'acsgpxstitch_app/track_list.html', {
         "tracks": tracks,
+        "original_tracks": original_tracks,
         "intelligent_stitch": intelligent_stitch,
-        "total_distance": total_distance,
+        "total_distance": round(total_distance, 2),
         "map_filename": "/static/maps/" + map_filename,
         "basemap_filename": "/static/maps/" + basemap_filename,
         }
