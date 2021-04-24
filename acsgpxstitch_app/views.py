@@ -58,15 +58,15 @@ def track_list(request):
                 original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
             except:
                 return redirect('track_list')
-
-        if gpxdownload == 'True':
-            return download_gpx(request, trackname, tracks)
     
         intelligent_stitch = request.POST.get('intelligent_stitch')
         if intelligent_stitch:
             tracks = order_tracks(request, original_tracks)
         else:
             tracks = original_tracks.copy()
+
+        if gpxdownload == 'True':
+            return download_gpx(request, trackname, tracks)
 
         make_map(request, tracks, map_filename)
     
