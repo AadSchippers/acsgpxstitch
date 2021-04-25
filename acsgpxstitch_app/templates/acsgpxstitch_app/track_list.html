@@ -18,30 +18,28 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                                 <div class="file-field">
-                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">1. Select GPX files to stitch together</label>
+                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">Select GPX files to stitch together</label>
                                     <div class="btn">
                                         <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
                                     </div>
                                     <div class="gpxfilepath file-path-wrapper">
-                                        <input class="gpxfilepath file-path validate" type="text">
+                                        <input class="gpxfilepath file-path validate" type="text" onchange=procesFiles()>
                                     </div>
                                     <br>
-                                    <label for="gpxload" id="gpxloadlabel" class="gpxfilelabel" onclick=procesFiles()>2. Click to stitch selected files</label>
-                                    <input type="submit" id="gpxload" style="display:none">
                                 </div>
-                                <label class="checkcontainer">
-                                    <b>Use Intelligent Stitch </b>
-                                    <input type="checkbox"
-                                        name="intelligent_stitch"
-                                        {% if intelligent_stitch %}
-                                            checked="checked" 
-                                        {% endif %}
-                                        {% if tracks.1.filename %}
-                                            onchange=procesFiles()
-                                        {% endif %}
-                                        id="id_intelligent_stitch">
-                                    <span class="checkmark"></span> 
-                                </label>
+                                {% if tracks.1.filename %}
+                                    <label class="checkcontainer">
+                                        <b>Use Intelligent Stitch </b>
+                                        <input type="checkbox"
+                                            name="intelligent_stitch"
+                                            {% if intelligent_stitch %}
+                                                checked="checked" 
+                                            {% endif %}
+                                                onchange=procesFiles()
+                                            id="id_intelligent_stitch">
+                                        <span class="checkmark"></span> 
+                                    </label>
+                                {% endif %}
                             </form>
                         </td>
                     </tr>
