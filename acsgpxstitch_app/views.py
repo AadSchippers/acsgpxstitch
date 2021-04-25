@@ -22,20 +22,10 @@ def track_list(request):
     basemap_filename = settings.BASE_MAP 
     gpxdownload = None
     intelligent_stitch = None
-
-    try:
-        if not tracks:
-            tracks = []
-    except:
-        tracks = []
-    try:
-        if not original_tracks:
-            try:
-                original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
-            except:
-                original_tracks = []
-    except:
-        original_tracks = []
+    start_selection = 0
+    end_selection = 9999999
+    tracks = []
+    original_tracks = []
 
     if request.method == 'POST':
         files = request.FILES.getlist('gpxfile')
@@ -53,6 +43,14 @@ def track_list(request):
 
         gpxdownload = request.POST.get('gpxdownload')
         trackname = request.POST.get('trackname')
+        try:
+            start_selection = int(request.POST.get('start_selection'))
+        except:
+            pass
+        try:
+            end_selection = int(request.POST.get('end_selection'))
+        except:
+            pass
         if not original_tracks:
             try:
                 original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
@@ -66,9 +64,9 @@ def track_list(request):
             tracks = original_tracks.copy()
 
         if gpxdownload == 'True':
-            return download_gpx(request, trackname, tracks)
+            return download_gpx(request, trackname, tracks, start_selection, end_selection)
 
-        make_map(request, tracks, map_filename)
+        make_map(request, tracks, map_filename, start_selection, end_selection)
     
     total_distance = 0
     for t in tracks:
@@ -78,6 +76,8 @@ def track_list(request):
         "tracks": tracks,
         "original_tracks": original_tracks,
         "intelligent_stitch": intelligent_stitch,
+        "start_selection": start_selection,
+        "end_selection": end_selection,
         "total_distance": round(total_distance, 2),
         "map_filename": "/static/maps/" + map_filename,
         "basemap_filename": "/static/maps/" + basemap_filename,

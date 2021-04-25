@@ -86,7 +86,7 @@ def order_tracks(request, original_tracks):
     return ordered_tracks
 
 
-def make_map(request, tracks, map_filename):
+def make_map(request, tracks, map_filename, start_selection, end_selection):
     ave_lats = []
     ave_lons = []
     for t in tracks:
@@ -127,18 +127,22 @@ def make_map(request, tracks, map_filename):
     # add lines
     folium.PolyLine(points, color=settings.CONNECT_COLOR , weight=2.5, opacity=1).add_to(my_map)
 
-    i = 0
-    for track in tracks:
-        if i == 0:
-            start_color = settings.START_COLOR
-        else:
-            start_color = settings.MARKER_COLOR
-        if i == (len(tracks) - 1):
-            end_color = settings.END_COLOR
-        else:
-            end_color = settings.MARKER_COLOR
-        my_map = draw_map(request, my_map, track, start_color, end_color)
-        i += 1
+    if len(tracks) > 1:
+        i = 0
+        for track in tracks:
+            if i == 0:
+                start_color = settings.START_COLOR
+            else:
+                start_color = settings.MARKER_COLOR
+            if i == (len(tracks) - 1):
+                end_color = settings.END_COLOR
+            else:
+                end_color = settings.MARKER_COLOR
+            my_map = draw_map(request, my_map, track, start_color, end_color, False, start_selection, end_selection)
+            i += 1
+    else:
+        my_map = draw_map(request, my_map, track, settings.MARKER_COLOR, settings.MARKER_COLOR, True, start_selection, end_selection)
+
 
     folium.LayerControl(collapsed=True).add_to(my_map)
 
@@ -152,22 +156,42 @@ def make_map(request, tracks, map_filename):
     return
 
 
-def draw_map(request, my_map, track, start_color, end_color): 
+def draw_map(request, my_map, track, start_color, end_color, show_all_markers, start_selection, end_selection): 
     points = []
     for p in track["points"]:
         points.append(tuple([p[0], p[1]]))
 
-    # start marker
-    tooltip_text = 'Start ' + track["filename"]
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
-    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    folium.Marker(points[0], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
+    if show_all_markers:
+        ip = 0
+        for p in points:
+            tooltip_text = 'Point ' + str(ip)
+            tooltip_style = 'color: #700394; font-size: 0.85vw'
+            tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+            marker_color = settings.MARKER_COLOR
+            try:
+                if ip < start_selection:
+                    marker_color = settings.NOT_SELECTED_COLOR
+            except:
+                pass
+            try:
+                if ip > end_selection:
+                    marker_color = settings.NOT_SELECTED_COLOR
+            except:
+                pass
+            folium.Marker(p, icon=folium.Icon(color=marker_color), tooltip=tooltip).add_to(my_map)
+            ip += 1
+    else:
+        # start marker
+        tooltip_text = 'Start ' + track["filename"]
+        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+        folium.Marker(points[0], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
 
-    # finish marker
-    tooltip_text = 'Finish ' + track["filename"]
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
-    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    folium.Marker(points[-1], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)
+        # finish marker
+        tooltip_text = 'Finish ' + track["filename"]
+        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+        folium.Marker(points[-1], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)           
  
     # add lines
     folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
@@ -175,7 +199,7 @@ def draw_map(request, my_map, track, start_color, end_color):
     return my_map
 
 
-def download_gpx(request, trackname, tracks):
+def download_gpx(request, trackname, tracks, start_selection, end_selection):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')
     if not trackname:
@@ -200,9 +224,11 @@ def download_gpx(request, trackname, tracks):
         points = t["points"]
         row = 0
         while row < len(points):
-            writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
-            writer.writerow([str("        <ele>"+str(points[row][2])+"</ele>")])
-            writer.writerow([str("      </trkpt>")])
+            if row >= start_selection:
+                if row <= end_selection:
+                    writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
+                    writer.writerow([str("        <ele>"+str(points[row][2])+"</ele>")])
+                    writer.writerow([str("      </trkpt>")])
             row += 1
 
         writer.writerow([str("    </trkseg>")])
