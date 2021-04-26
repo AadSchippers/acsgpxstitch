@@ -44,53 +44,52 @@
                         </td>
                     </tr>
                 </table>
-            <hr>
-                <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
-                    <thead>
-                        <th>Filename</th>
-                        <th style="text-align:right;">Length (km)</th>
-                        {% if intelligent_stitch %}
-                            <th>Reversed</th>
-                        {% endif %}
-                    </thead>
-                    <tbody>
-                        {% for track in tracks %}
-                            <tr>
-                                {% if track.filename %}
-                                    <td>{{ track.filename }}</td>
-                                    <td style="text-align:right;">{{ track.distance }}</td>
-                                    {% if intelligent_stitch %}
-                                        <td>
-                                            <label class="checkcontainer">
-                                                <input type="checkbox"
-                                                    name="reverse_track" 
-                                                    {% if track.reversed %}
-                                                        checked="checked" 
-                                                    {% endif %}
-                                                    id="id_reverse_track"
-                                                    disabled="disabled">
-                                                <span class="checkmark"></span> 
-                                            </label>
-                                        </td>
-                                    {% endif %}
-                                {% endif %}
-                            </tr>
-                        {% endfor %}
-                        <tr>
-                            <td><b>Total:</b></td>
-                            <td style="text-align:right;"><b>{{ total_distance }}</b></td>
-                        </tr>
-                    </tbody>
-                </table>
                 <hr>
                 {% if tracks.0.filename %}
+                    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+                        <thead>
+                            <th>Filename</th>
+                            <th style="text-align:right;">Length (km)</th>
+                            {% if intelligent_stitch %}
+                                <th>Reversed</th>
+                            {% endif %}
+                        </thead>
+                        <tbody>
+                            {% for track in tracks %}
+                                <tr>
+                                    {% if track.filename %}
+                                        <td>{{ track.filename }}</td>
+                                        <td style="text-align:right;">{{ track.distance }}</td>
+                                        {% if intelligent_stitch %}
+                                            <td>
+                                                <label class="checkcontainer">
+                                                    <input type="checkbox"
+                                                        name="reverse_track" 
+                                                        {% if track.reversed %}
+                                                            checked="checked" 
+                                                        {% endif %}
+                                                        id="id_reverse_track"
+                                                        disabled="disabled">
+                                                    <span class="checkmark"></span> 
+                                                </label>
+                                            </td>
+                                        {% endif %}
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td><b>Total:</b></td>
+                                <td style="text-align:right;"><b>{{ total_distance }}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
                     {% if not tracks.1.filename %}
                         <table class="scalefont">
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
                                 <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
-                                <input type="hidden" name="intelligent_stitch" value="{{ intelligent_stitch }}">
                                 <tr>
                                     <td>
                                         <b>Start selection </b><input type="number" name="start_selection" value="{{ start_selection }}">
@@ -107,13 +106,12 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
                                 <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
-                                <input type="hidden" name="intelligent_stitch" value="{{ intelligent_stitch }}">
                                 <input type="hidden" name="start_selection" value="{{ start_selection }}">
                                 <input type="hidden" name="end_selection" value="{{ end_selection }}">
                                 <input type="hidden" name="gpxdownload" value="True">
                                 <tr>
                                     <td>
-                                        <br><input type="submit" id="selectdownload" value="Download selection" class="save btn btn-default scalefont">
+                                        <br><input type="submit" id="gpxdownload" value="Download selection" class="save btn btn-default scalefont">
                                     </td>
                                 </tr>
                             </form>

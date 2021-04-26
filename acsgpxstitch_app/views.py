@@ -60,7 +60,11 @@ def track_list(request):
         if len(original_tracks) == 0:
             return redirect('track_list')
     
-        intelligent_stitch = request.POST.get('intelligent_stitch')
+        if len(original_tracks) == 1:
+            intelligent_stitch = None
+        else:
+            intelligent_stitch = request.POST.get('intelligent_stitch')
+
         if intelligent_stitch:
             tracks = order_tracks(request, original_tracks)
         else:
