@@ -49,27 +49,31 @@
                     <thead>
                         <th>Filename</th>
                         <th>Length (km)</th>
-                        <th>Reversed</th>
+                        {% if intelligent_stitch %}
+                            <th>Reversed</th>
+                        {% endif %}
                     </thead>
                     <tbody>
                         {% for track in tracks %}
                             <tr>
                                 {% if track.filename %}
-                                <td>{{ track.filename }}</td>
-                                <td style="text-align:right;">{{ track.distance }}</td>
-                                <td>
-                                    <label class="checkcontainer">
-                                        <input type="checkbox"
-                                            name="reverse_track" 
-                                            {% if track.reversed %}
-                                                checked="checked" 
-                                            {% endif %}
-                                            id="id_reverse_track"
-                                            disabled="disabled">
-                                        <span class="checkmark"></span> 
-                                    </label>
-                                </td>
-                            {% endif %}
+                                    <td>{{ track.filename }}</td>
+                                    <td style="text-align:right;">{{ track.distance }}</td>
+                                    {% if intelligent_stitch %}
+                                        <td>
+                                            <label class="checkcontainer">
+                                                <input type="checkbox"
+                                                    name="reverse_track" 
+                                                    {% if track.reversed %}
+                                                        checked="checked" 
+                                                    {% endif %}
+                                                    id="id_reverse_track"
+                                                    disabled="disabled">
+                                                <span class="checkmark"></span> 
+                                            </label>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
                             </tr>
                         {% endfor %}
                         <tr>
