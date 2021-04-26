@@ -3,6 +3,7 @@ import os
 import gpxpy
 import gpxpy.gpx
 import folium
+from django.shortcuts import render, redirect
 from folium.features import DivIcon
 from decimal import *
 from datetime import datetime
@@ -16,36 +17,44 @@ import io
 import copy
 
 
-def process_gpx_file(request, file, atrack):
-    reader = io.BufferedReader(file.file)
-    wrapper = io.TextIOWrapper(reader)
-    gpx_file = wrapper.read() 
+def process_gpx_file(request, file):
+    try:
+        atrack = {
+            "filename": file.name,
+            "distance": 0,
+            "reversed": False
+        }
+        reader = io.BufferedReader(file.file)
+        wrapper = io.TextIOWrapper(reader)
+        gpx_file = wrapper.read() 
 
-    gpx = gpxpy.parse(gpx_file)
+        gpx = gpxpy.parse(gpx_file)
 
-    points = []
-    timezone_info = timezone(settings.TIME_ZONE)   
-    previous_point = None
-    distance = 0
-    trackname = ""
-    for track in gpx.tracks:
-        trackname = track.name
-        for segment in track.segments:
-            for point in segment.points:
+        points = []
+        timezone_info = timezone(settings.TIME_ZONE)   
+        previous_point = None
+        distance = 0
+        trackname = ""
+        for track in gpx.tracks:
+            trackname = track.name
+            for segment in track.segments:
+                for point in segment.points:
 
-                points.append(tuple([point.latitude,
-                                    point.longitude,
-                                    point.elevation,
-                                    ]))
+                    points.append(tuple([point.latitude,
+                                        point.longitude,
+                                        point.elevation,
+                                        ]))
 
-                point_distance = calculate_using_haversine(points[len(points)-1], previous_point)
-                distance += point_distance
+                    point_distance = calculate_using_haversine(points[len(points)-1], previous_point)
+                    distance += point_distance
 
-                previous_point = points[len(points)-1]
+                    previous_point = points[len(points)-1]
 
-        atrack["trackname"] = trackname
-        atrack["distance"] = round(distance/1000, 2)
-        atrack["points"] = points
+            atrack["trackname"] = trackname
+            atrack["distance"] = round(distance/1000, 2)
+            atrack["points"] = points
+    except:
+        atrack = None
 
     return atrack
 
@@ -141,7 +150,7 @@ def make_map(request, tracks, map_filename, start_selection, end_selection):
             my_map = draw_map(request, my_map, track, start_color, end_color, False, start_selection, end_selection)
             i += 1
     else:
-        my_map = draw_map(request, my_map, track, settings.MARKER_COLOR, settings.MARKER_COLOR, True, start_selection, end_selection)
+        my_map = draw_map(request, my_map, track, settings.START_COLOR, settings.END_COLOR, True, start_selection, end_selection)
 
 
     folium.LayerControl(collapsed=True).add_to(my_map)
@@ -156,45 +165,57 @@ def make_map(request, tracks, map_filename, start_selection, end_selection):
     return
 
 
-def draw_map(request, my_map, track, start_color, end_color, show_all_markers, start_selection, end_selection): 
+def draw_map(request, my_map, track, start_color, end_color, show_all_markers, start_selection, end_selection):
+    if end_selection > len(track["points"]) - 1:
+        end_selection = len(track["points"]) - 1
+
     points = []
     for p in track["points"]:
         points.append(tuple([p[0], p[1]]))
 
+    points_selected = []
     if show_all_markers:
         ip = 0
         for p in points:
             tooltip_text = 'Point ' + str(ip)
             tooltip_style = 'color: #700394; font-size: 0.85vw'
             tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-            marker_color = settings.MARKER_COLOR
-            try:
-                if ip < start_selection:
-                    marker_color = settings.NOT_SELECTED_COLOR
-            except:
-                pass
-            try:
-                if ip > end_selection:
-                    marker_color = settings.NOT_SELECTED_COLOR
-            except:
-                pass
-            folium.Marker(p, icon=folium.Icon(color=marker_color), tooltip=tooltip).add_to(my_map)
-            ip += 1
-    else:
-        # start marker
-        tooltip_text = 'Start ' + track["filename"]
-        tooltip_style = 'color: #700394; font-size: 0.85vw'
-        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-        folium.Marker(points[0], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
+            marker_color = settings.NOT_SELECTED_COLOR
+            if ip >= start_selection:
+                if ip <= end_selection:
+                    marker_color = settings.LINE_COLOR
+                    points_selected.append(p)
+            # folium.Marker(p, icon=folium.Icon(color=marker_color), tooltip=tooltip).add_to(my_map)
+            folium.vector_layers.CircleMarker(
+                    location=[p[0], p[1]],
+                    radius=7,
+                    color="white",
+                    weight=1,
+                    fill_color=marker_color,
+                    fill_opacity=1,
+                    tooltip=tooltip,
+                ).add_to(my_map)
 
-        # finish marker
-        tooltip_text = 'Finish ' + track["filename"]
-        tooltip_style = 'color: #700394; font-size: 0.85vw'
-        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-        folium.Marker(points[-1], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)           
+            ip += 1
+
+    # start marker
+    tooltip_text = 'Start ' + track["filename"]
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+    folium.Marker(points[start_selection], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
+
+    # finish marker
+    tooltip_text = 'Finish ' + track["filename"]
+    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+    folium.Marker(points[end_selection], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)           
  
     # add lines
-    folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
+    if len(points_selected) > 0:
+        folium.PolyLine(points, color=settings.NOT_SELECTED_COLOR, weight=2.5, opacity=1).add_to(my_map)
+        folium.PolyLine(points_selected, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
+    else:
+        folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
 
     return my_map
 

@@ -15,6 +15,7 @@ from .mapviews import *
 import re
 import hashlib
 import ast
+import copy
 
 
 def track_list(request):   
@@ -31,15 +32,14 @@ def track_list(request):
         files = request.FILES.getlist('gpxfile')
         if files:
             original_tracks = []
-        i = 0
         for file in files:
-            original_tracks.append({
-                "filename": file.name,
-                "distance": 0,
-                "reversed": False
-            })
-            original_tracks[i] = process_gpx_file(request, file, original_tracks[i])
-            i += 1
+            new_track = []
+            try:
+                new_track = (process_gpx_file(request, file))
+                if new_track:
+                    original_tracks.append(copy.deepcopy(new_track))
+            except:
+                pass
 
         gpxdownload = request.POST.get('gpxdownload')
         trackname = request.POST.get('trackname')
@@ -56,6 +56,9 @@ def track_list(request):
                 original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
             except:
                 return redirect('track_list')
+        
+        if len(original_tracks) == 0:
+            return redirect('track_list')
     
         intelligent_stitch = request.POST.get('intelligent_stitch')
         if intelligent_stitch:

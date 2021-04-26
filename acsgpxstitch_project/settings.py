@@ -138,7 +138,7 @@ BASE_MAP = "acsgpxstitch_base.html"
 # Folium map colours
 LINE_COLOR = "red"
 MARKER_COLOR = 'purple'
-NOT_SELECTED_COLOR = 'lightgray'
+NOT_SELECTED_COLOR = 'gray'
 START_COLOR = "pink"
 END_COLOR = "darkpurple"
 CONNECT_COLOR="darkred"
