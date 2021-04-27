@@ -185,12 +185,11 @@ def draw_map(request, my_map, track, start_color, end_color, show_all_markers, s
                 if ip <= end_selection:
                     marker_color = settings.LINE_COLOR
                     points_selected.append(p)
-            # folium.Marker(p, icon=folium.Icon(color=marker_color), tooltip=tooltip).add_to(my_map)
             folium.vector_layers.CircleMarker(
                     location=[p[0], p[1]],
                     radius=7,
-                    color="white",
-                    weight=1,
+                    color=marker_color,
+                    weight=0,
                     fill_color=marker_color,
                     fill_opacity=1,
                     tooltip=tooltip,
@@ -199,13 +198,23 @@ def draw_map(request, my_map, track, start_color, end_color, show_all_markers, s
             ip += 1
 
     # start marker
-    tooltip_text = 'Start ' + track["filename"]
+    if start_selection > 0:
+        strStart = "Start selection "
+    else:
+        strStart = "Start "
+
+    tooltip_text = strStart + track["filename"]
     tooltip_style = 'color: #700394; font-size: 0.85vw'
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     folium.Marker(points[start_selection], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
 
     # finish marker
-    tooltip_text = 'Finish ' + track["filename"]
+    if end_selection < len(track["points"]) - 1:
+        strFinish = "Finish selection "
+    else:
+        strFinish = "Finish "
+
+    tooltip_text = strFinish + track["filename"]
     tooltip_style = 'color: #700394; font-size: 0.85vw'
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     folium.Marker(points[end_selection], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)           
