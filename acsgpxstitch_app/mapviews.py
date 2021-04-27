@@ -238,7 +238,7 @@ def download_gpx(request, trackname, tracks, start_selection, end_selection):
         "xsi:schemaLocation='http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd'>")
         ])
     writer.writerow([str("  <trk>")])
-    writer.writerow([str("    <name>"+trackname+"</name>")])
+    writer.writerow([str("    <name>"+escaped(trackname)+"</name>")])
 
     for t in tracks:
         writer.writerow([str("    <trkseg>")])
@@ -269,4 +269,14 @@ def calculate_using_haversine(point, previous_point):
         distance = haversine(current_location, previous_location, unit='m')
 
     return distance
+
+
+def escaped(astring):
+    astring = astring.replace("&", "&amp;")
+    astring = astring.replace("<", "&lt;")
+    astring = astring.replace(">", "&gt;")
+    astring = astring.replace("'", "&apos;")
+    astring = astring.replace('"', "&quot;")
+
+    return astring
 
