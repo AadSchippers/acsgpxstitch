@@ -7,6 +7,11 @@
         document.getElementById("id-processing-img").style.visibility = "visible";
         document.getElementById("uploadform").submit();
     }
+    function splitFile() {
+        document.getElementById("id-processing-p").style.visibility = "visible";
+        document.getElementById("id-processing-img").style.visibility = "visible";
+        document.getElementById("splitform").submit();
+    }
 </script>
     <div class="container">
         <div class="row">
@@ -88,35 +93,60 @@
                     <hr>
                     {% if not tracks.1.filename %}
                         <table class="scalefont">
-                            <form method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="hidden" name="tracks" value="{{ tracks }}">
-                                <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
-                                <tr>
-                                    <td>
-                                        <b>Start selection </b><input type="number" name="start_selection" value="{{ start_selection }}">
-                                    </td>
-                                    <td>
-                                        <b>End selection </b><input type="number" name="end_selection" value="{{ end_selection }}">
-                                    </td>
-                                    <td>
-                                        <br><input type="submit" id="selection" value="Select" class="save btn btn-default scalefont">
-                                    </td>
-                                </tr>
-                            </form>
-                            <form method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
+                            <form method="post" class="md-form" id="splitform" enctype="multipart/form-data">
+                            {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
                                 <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                                 <input type="hidden" name="start_selection" value="{{ start_selection }}">
                                 <input type="hidden" name="end_selection" value="{{ end_selection }}">
-                                <input type="hidden" name="gpxdownload" value="True">
-                                <tr>
+                            <tr>
                                     <td>
-                                        <br><input type="submit" id="gpxdownload" value="Download selection" class="save btn btn-default scalefont">
+                                        <label class="checkcontainer">
+                                            <b>Split file </b>
+                                            <input type="checkbox"
+                                                name="split_file"
+                                                {% if split_file %}
+                                                    checked="checked" 
+                                                {% endif %}
+                                                    onchange=splitFile()
+                                                id="id_split_file">
+                                            <span class="checkmark"></span> 
+                                        </label>
                                     </td>
                                 </tr>
                             </form>
+                            {% if split_file %}
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tracks" value="{{ tracks }}">
+                                    <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                    <input type="hidden" name="split_file" value="{{ split_file }}">
+                                    <tr>
+                                        <td>
+                                            <b>Start selection </b><input type="number" name="start_selection" value="{{ start_selection }}">
+                                        </td>
+                                        <td>
+                                            <b>End selection </b><input type="number" name="end_selection" value="{{ end_selection }}">
+                                        </td>
+                                        <td>
+                                            <br><input type="submit" id="selection" value="Select" class="save btn btn-default scalefont">
+                                        </td>
+                                    </tr>
+                                </form>
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tracks" value="{{ tracks }}">
+                                    <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                    <input type="hidden" name="start_selection" value="{{ start_selection }}">
+                                    <input type="hidden" name="end_selection" value="{{ end_selection }}">
+                                    <input type="hidden" name="gpxdownload" value="True">
+                                    <tr>
+                                        <td>
+                                            <br><input type="submit" id="gpxdownload" value="Download selection" class="save btn btn-default scalefont">
+                                        </td>
+                                    </tr>
+                                </form>
+                            {% endif %}
                         </table>
                     {% endif %}
                 {% endif %}

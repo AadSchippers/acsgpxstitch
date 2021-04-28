@@ -95,7 +95,7 @@ def order_tracks(request, original_tracks):
     return ordered_tracks
 
 
-def make_map(request, tracks, map_filename, start_selection, end_selection):
+def make_map(request, tracks, map_filename, start_selection, end_selection, split_file):
     ave_lats = []
     ave_lons = []
     for t in tracks:
@@ -147,10 +147,10 @@ def make_map(request, tracks, map_filename, start_selection, end_selection):
                 end_color = settings.END_COLOR
             else:
                 end_color = settings.MARKER_COLOR
-            my_map = draw_map(request, my_map, track, start_color, end_color, False, start_selection, end_selection)
+            my_map = draw_map(request, my_map, track, start_color, end_color, start_selection, end_selection, False)
             i += 1
     else:
-        my_map = draw_map(request, my_map, track, settings.START_COLOR, settings.END_COLOR, True, start_selection, end_selection)
+        my_map = draw_map(request, my_map, track, settings.START_COLOR, settings.END_COLOR, start_selection, end_selection, split_file)
 
 
     folium.LayerControl(collapsed=True).add_to(my_map)
@@ -165,7 +165,7 @@ def make_map(request, tracks, map_filename, start_selection, end_selection):
     return
 
 
-def draw_map(request, my_map, track, start_color, end_color, show_all_markers, start_selection, end_selection):
+def draw_map(request, my_map, track, start_color, end_color, start_selection, end_selection, split_file):
     if end_selection > len(track["points"]) - 1:
         end_selection = len(track["points"]) - 1
 
@@ -174,7 +174,7 @@ def draw_map(request, my_map, track, start_color, end_color, show_all_markers, s
         points.append(tuple([p[0], p[1]]))
 
     points_selected = []
-    if show_all_markers:
+    if split_file:
         ip = 0
         for p in points:
             tooltip_text = 'Point ' + str(ip)
@@ -198,6 +198,9 @@ def draw_map(request, my_map, track, start_color, end_color, show_all_markers, s
             ip += 1
 
     # start marker
+    if not split_file:
+        start_selection = 0
+
     if start_selection > 0:
         strStart = "Start selection "
     else:
@@ -209,6 +212,9 @@ def draw_map(request, my_map, track, start_color, end_color, show_all_markers, s
     folium.Marker(points[start_selection], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
 
     # finish marker
+    if not split_file:
+        end_selection = len(track["points"]) - 1
+
     if end_selection < len(track["points"]) - 1:
         strFinish = "Finish selection "
     else:

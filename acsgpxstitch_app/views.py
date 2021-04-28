@@ -25,6 +25,7 @@ def track_list(request):
     basemap_filename = settings.BASE_MAP 
     gpxdownload = None
     intelligent_stitch = None
+    split_file = None
     start_selection = 0
     end_selection = 9999999
     tracks = []
@@ -66,6 +67,11 @@ def track_list(request):
             intelligent_stitch = None
         else:
             intelligent_stitch = request.POST.get('intelligent_stitch')
+        
+        if len(original_tracks) == 1:
+            split_file = request.POST.get('split_file')
+        else:
+            split_file = None
 
         if intelligent_stitch:
             tracks = order_tracks(request, original_tracks)
@@ -75,7 +81,7 @@ def track_list(request):
         if gpxdownload == 'True':
             return download_gpx(request, trackname, tracks, start_selection, end_selection)
 
-        make_map(request, tracks, map_filename, start_selection, end_selection)
+        make_map(request, tracks, map_filename, start_selection, end_selection, split_file)
     
     total_distance = 0
     for t in tracks:
@@ -85,6 +91,7 @@ def track_list(request):
         "tracks": tracks,
         "original_tracks": original_tracks,
         "intelligent_stitch": intelligent_stitch,
+        "split_file": split_file,
         "start_selection": start_selection,
         "end_selection": end_selection,
         "total_distance": round(total_distance, 2),
