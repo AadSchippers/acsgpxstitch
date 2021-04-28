@@ -16,10 +16,12 @@ import re
 import hashlib
 import ast
 import copy
+import random
 
 
 def track_list(request):   
-    map_filename = settings.TRACK_MAP
+    map_filename_random = "_" + str(random.randint(0, 9))
+    map_filename = settings.TRACK_MAP.replace('.html', map_filename_random) + '.html'
     basemap_filename = settings.BASE_MAP 
     gpxdownload = None
     intelligent_stitch = None
