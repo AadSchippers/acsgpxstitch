@@ -18,7 +18,7 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                                 <div class="file-field">
-                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel">Select GPX files to stitch together</label>
+                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel save btn btn-default scalefont">Select GPX files to split or stitch</label>
                                     <div class="btn">
                                         <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
                                     </div>
@@ -29,7 +29,7 @@
                                 </div>
                                 {% if tracks.1.filename %}
                                     <label class="checkcontainer">
-                                        <b>Use Intelligent Stitch </b>
+                                        <b>Intelligent Stitch </b>
                                         <input type="checkbox"
                                             name="intelligent_stitch"
                                             {% if intelligent_stitch %}
@@ -77,10 +77,12 @@
                                     {% endif %}
                                 </tr>
                             {% endfor %}
-                            <tr>
-                                <td><b>Total:</b></td>
-                                <td style="text-align:right;"><b>{{ total_distance }}</b></td>
-                            </tr>
+                            {% if tracks.1.filename %}
+                                <tr>
+                                    <td><b>Total:</b></td>
+                                    <td style="text-align:right;"><b>{{ total_distance }}</b></td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                     <hr>
