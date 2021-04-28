@@ -180,6 +180,11 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
             tooltip_text = 'Point ' + str(ip)
             tooltip_style = 'color: #700394; font-size: 0.85vw'
             tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+            html = (
+                "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+                tooltip_text + "</p>"
+            )
+            popup = folium.Popup(html, max_width=300)
             marker_color = settings.NOT_SELECTED_COLOR
             if ip >= start_selection:
                 if ip <= end_selection:
@@ -193,6 +198,7 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
                     fill_color=marker_color,
                     fill_opacity=1,
                     tooltip=tooltip,
+                    popup=popup,
                 ).add_to(my_map)
 
             ip += 1
@@ -209,7 +215,12 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
     tooltip_text = strStart + track["filename"]
     tooltip_style = 'color: #700394; font-size: 0.85vw'
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    folium.Marker(points[start_selection], icon=folium.Icon(color=start_color), tooltip=tooltip).add_to(my_map)
+    html = (
+        "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+        strStart + track["filename"] + "</p>"
+    )
+    popup = folium.Popup(html, max_width=300)
+    folium.Marker(points[start_selection], icon=folium.Icon(color=start_color), tooltip=tooltip, popup=popup).add_to(my_map)
 
     # finish marker
     if not split_file:
@@ -223,7 +234,12 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
     tooltip_text = strFinish + track["filename"]
     tooltip_style = 'color: #700394; font-size: 0.85vw'
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-    folium.Marker(points[end_selection], icon=folium.Icon(color=end_color), tooltip=tooltip).add_to(my_map)           
+    html = (
+        "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+        strFinish + track["filename"] + "</p>"
+    )
+    popup = folium.Popup(html, max_width=300)
+    folium.Marker(points[end_selection], icon=folium.Icon(color=end_color), tooltip=tooltip, popup=popup).add_to(my_map)           
  
     # add lines
     if len(points_selected) > 0:
