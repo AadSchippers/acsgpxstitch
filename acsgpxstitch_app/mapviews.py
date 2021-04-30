@@ -173,35 +173,35 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
     for p in track["points"]:
         points.append(tuple([p[0], p[1]]))
 
+    points_before = []
     points_selected = []
+    points_end = []
     if split_file:
         ip = 0
         for p in points:
-            tooltip_text = 'Point ' + str(ip)
-            tooltip_style = 'color: #700394; font-size: 0.85vw'
-            tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
-            html = (
-                "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
-                tooltip_text + "</p>"
-            )
-            popup = folium.Popup(html, max_width=300)
-            marker_color = settings.NOT_SELECTED_COLOR
             if ip >= start_selection:
                 if ip <= end_selection:
-                    marker_color = settings.LINE_COLOR
                     points_selected.append(p)
-            folium.vector_layers.CircleMarker(
-                    location=[p[0], p[1]],
-                    radius=7,
-                    color=marker_color,
-                    weight=0,
-                    fill_color=marker_color,
-                    fill_opacity=1,
-                    tooltip=tooltip,
-                    popup=popup,
-                ).add_to(my_map)
+                else:
+                    points_end.append(p)
+            else:
+                points_before.append(p)
 
             ip += 1
+ 
+    # add lines and markers
+    if split_file:
+        if len(points_selected) > 0:
+            folium.PolyLine(points_selected, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
+            add_markers(my_map, points_selected, settings.LINE_COLOR, len(points_before))
+            if len(points_before) > 0:
+                folium.PolyLine(points_before, color=settings.NOT_SELECTED_COLOR, weight=2.5, opacity=1).add_to(my_map)
+                add_markers(my_map, points_before, settings.NOT_SELECTED_COLOR, 0)
+            if len(points_end) > 0:
+                folium.PolyLine(points_end, color=settings.NOT_SELECTED_COLOR, weight=2.5, opacity=1).add_to(my_map)
+                add_markers(my_map, points_end, settings.NOT_SELECTED_COLOR, (len(points_before) - 1 + len(points_selected)))
+    else:
+        folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
 
     # start marker
     if not split_file:
@@ -240,15 +240,36 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
     )
     popup = folium.Popup(html, max_width=300)
     folium.Marker(points[end_selection], icon=folium.Icon(color=end_color), tooltip=tooltip, popup=popup).add_to(my_map)           
- 
-    # add lines
-    if len(points_selected) > 0:
-        folium.PolyLine(points, color=settings.NOT_SELECTED_COLOR, weight=2.5, opacity=1).add_to(my_map)
-        folium.PolyLine(points_selected, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
-    else:
-        folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
 
     return my_map
+
+
+def add_markers(my_map, points, marker_color, ip_start):
+
+    ip = ip_start
+    for p in points:
+        tooltip_text = 'Point ' + str(ip)
+        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
+        html = (
+            "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+            tooltip_text + "</p>"
+        )
+        popup = folium.Popup(html, max_width=300)
+        folium.vector_layers.CircleMarker(
+                location=[p[0], p[1]],
+                radius=7,
+                color=marker_color,
+                weight=0,
+                fill_color=marker_color,
+                fill_opacity=1,
+                tooltip=tooltip,
+                popup=popup,
+            ).add_to(my_map)
+
+        ip += 1
+
+    return
 
 
 def download_gpx(request, trackname, tracks, start_selection, end_selection):
