@@ -16,7 +16,7 @@
     <div class="container">
         <div class="row">
             <div class="col-4">
-                <table class="scalefont" style="width:100%">
+                <table style="width:100%">
                     <tr>
                         <td>
                             <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
@@ -51,7 +51,7 @@
                 </table>
                 <hr>
                 {% if tracks.0.filename %}
-                    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+                    <table id="click-table" style="overflow-x:auto;" class="table-hover">
                         <thead>
                             <th>Filename</th>
                             <th style="text-align:right;">Length (km)</th>
@@ -92,7 +92,7 @@
                     </table>
                     <hr>
                     {% if not tracks.1.filename %}
-                        <table class="scalefont">
+                        <table>
                             <form method="post" class="md-form" id="splitform" enctype="multipart/form-data">
                             {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
@@ -129,7 +129,7 @@
                                             <b>End selection </b><input type="number" name="end_selection" value="{{ end_selection }}">
                                         </td>
                                         <td>
-                                            <br><input type="submit" id="selection" value="Select" class="save btn btn-default scalefont">
+                                            <br><input type="submit" id="selection" value="Select">
                                         </td>
                                     </tr>
                                 </form>
@@ -142,7 +142,7 @@
                                     <input type="hidden" name="gpxdownload" value="True">
                                     <tr>
                                         <td>
-                                            <br><input type="submit" id="gpxdownload" value="Download selection" class="save btn btn-default scalefont">
+                                            <br><input type="submit" id="gpxdownload" value="Download selection">
                                         </td>
                                     </tr>
                                 </form>
@@ -151,7 +151,7 @@
                     {% endif %}
                 {% endif %}
                 {% if tracks.1.filename %}
-                        <table class="scalefont">
+                        <table>
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
@@ -165,13 +165,13 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <br><input type="submit" id="gpxdownload" value="Download .gpx file" class="save btn btn-default scalefont">
+                                        <br><input type="submit" id="gpxdownload" value="Download .gpx file">
                                     </td>
                                 </tr>
                             </form>
                         </table>
                 {% endif %}
-                    <p id="id-processing-p" class="scalefont" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
+                    <p id="id-processing-p" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
                     <img id="id-processing-img" style="float:right; width:135px; height:112px;visibility: hidden;" src="/static/img/acstracks-progress.gif">    
             </div>
             <div class="col-8">
