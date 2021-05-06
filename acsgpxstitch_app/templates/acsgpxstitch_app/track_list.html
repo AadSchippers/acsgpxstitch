@@ -2,15 +2,10 @@
 
 {% block content %}
 <script>
-    function procesFiles() {
+    function processFiles(id) {
         document.getElementById("id-processing-p").style.visibility = "visible";
         document.getElementById("id-processing-img").style.visibility = "visible";
-        document.getElementById("uploadform").submit();
-    }
-    function splitFile() {
-        document.getElementById("id-processing-p").style.visibility = "visible";
-        document.getElementById("id-processing-img").style.visibility = "visible";
-        document.getElementById("splitform").submit();
+        document.getElementById(id).submit();
     }
 </script>
     <div class="container">
@@ -28,7 +23,7 @@
                                         <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
                                     </div>
                                     <div class="gpxfilepath file-path-wrapper">
-                                        <input class="gpxfilepath file-path validate" type="text" onchange=procesFiles()>
+                                        <input class="gpxfilepath file-path validate" type="text" onchange=processFiles("uploadform")>
                                     </div>
                                     <br>
                                 </div>
@@ -40,7 +35,7 @@
                                             {% if intelligent_stitch %}
                                                 checked="checked" 
                                             {% endif %}
-                                                onchange=procesFiles()
+                                                onchange=processFiles("uploadform")
                                             id="id_intelligent_stitch">
                                         <span class="checkmark"></span> 
                                     </label>
@@ -108,7 +103,7 @@
                                                 {% if split_file %}
                                                     checked="checked" 
                                                 {% endif %}
-                                                    onchange=splitFile()
+                                                    onchange=processFiles("splitform")
                                                 id="id_split_file">
                                             <span class="checkmark"></span> 
                                         </label>
