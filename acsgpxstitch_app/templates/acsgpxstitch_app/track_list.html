@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col-4">
-                <table style="width:100%">
+                <table style="width:100%" class="scalefont">
                     <tr>
                         <td>
                             <form method="post" class="md-form" id="uploadform" enctype="multipart/form-data">
@@ -46,7 +46,7 @@
                 </table>
                 <hr>
                 {% if tracks.0.filename %}
-                    <table id="click-table" style="overflow-x:auto;" class="table-hover">
+                    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
                         <thead>
                             <th>Filename</th>
                             <th style="text-align:right;">Length (km)</th>
@@ -87,7 +87,7 @@
                     </table>
                     <hr>
                     {% if not tracks.1.filename %}
-                        <table>
+                        <table class="scalefont">
                             <form method="post" class="md-form" id="splitform" enctype="multipart/form-data">
                             {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
@@ -146,7 +146,7 @@
                     {% endif %}
                 {% endif %}
                 {% if tracks.1.filename %}
-                        <table>
+                        <table class="scalefont">
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <input type="hidden" name="tracks" value="{{ tracks }}">
