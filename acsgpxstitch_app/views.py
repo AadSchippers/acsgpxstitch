@@ -27,6 +27,7 @@ def track_list(request):
         settings.TRACK_MAP.replace('.html', map_filename_random) + '.html'
         )
     basemap_filename = settings.BASE_MAP
+    trackname = None
     gpxdownload = None
     intelligent_stitch = None
     split_file = None
@@ -97,8 +98,8 @@ def track_list(request):
                     # invalid characters in input have been skipped
                     messages.error(
                         request,
-                        "Invalid characters in input " +
-                        ", input ignored.")
+                        "Invalid characters in track name."
+                    )
                     gpxdownload = False
 
         if gpxdownload == 'True':
@@ -112,7 +113,7 @@ def track_list(request):
             map_filename,
             start_selection,
             end_selection,
-            split_file
+            split_file,
             )
 
     total_distance = 0
@@ -129,6 +130,7 @@ def track_list(request):
         "total_distance": round(total_distance, 2),
         "map_filename": "/static/maps/" + map_filename,
         "basemap_filename": "/static/maps/" + basemap_filename,
+        "trackname": trackname,
         }
     )
 

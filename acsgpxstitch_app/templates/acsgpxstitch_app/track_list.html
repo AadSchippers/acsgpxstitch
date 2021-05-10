@@ -155,8 +155,14 @@
                                 <input type="hidden" name="gpxdownload" value="True">
                                 <tr>
                                     <td>
-                                        <b>Track name </b><input type="text" name="trackname" placeholder="{{ tracks.0.trackname }}">
-                                    </td>
+                                        <b>Track name </b>
+                                        <input type="text" name="trackname" 
+                                        {% if trackname %} 
+                                            value="{{ trackname }}"
+                                        {% else %}
+                                            placeholder="{{ tracks.0.trackname }}">
+                                        {% endif %}
+                                        </td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -172,10 +178,6 @@
             <div class="col-8">
                 {% if tracks.0.filename %}
                     <iframe class="responsive-iframe" id="map_frame" src={{ map_filename }} title="Track map"></iframe>
-                    <script type=”text/javascript”>
-                        var i = 1 + Math.round(Math.random()*(2));
-                        document.getElementById('map_frame').src=’panel_’+i+’.html’
-                        </script>                
                 {% else %}
                     <iframe class="responsive-iframe" src={{ basemap_filename }} title="Track map"></iframe>
                 {% endif %}

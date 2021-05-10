@@ -13,23 +13,21 @@
     </head>
     <body>
         <div class="detail scalefont">     
-            <table style="width:100%">
-                <tr>
-                    <td style="width: 600px">
+                <div class="row">
+                    <div class="col-4">
                         <a href="{% url 'track_list'  %}"><h1 style="font-size: 2.5vw; font-weight: 500;">AcsGPXStitch</h1></a>
-                    </td>
-                    {% if messages %}
-                        <td>
+                    </div>
+                    <div class="col-5">
+                        {% if messages %}
                             {% for message in messages %}
                                 {% if "error" in message.tags %}
-                                        <p style="color: red"><b><i>{{ message }}</i></b></p>
+                                        <p style="color: pink; background-color: purple;"><b><i>{{ message }}</i></b></p>
                                 {% endif %}
                             {% endfor %}
-                        </td>
-                    {% endif %}
-                </tr>
-            </table>
-            <br><br>
+                        {% endif %}
+                    </div>
+                </div>
+                <br><br>
             {% block content %}
             {% endblock %}
         </div>
