@@ -26,12 +26,12 @@ def process_gpx_file(request, file):
         }
         reader = io.BufferedReader(file.file)
         wrapper = io.TextIOWrapper(reader)
-        gpx_file = wrapper.read() 
+        gpx_file = wrapper.read()
 
         gpx = gpxpy.parse(gpx_file)
 
         points = []
-        timezone_info = timezone(settings.TIME_ZONE)   
+        timezone_info = timezone(settings.TIME_ZONE)
         previous_point = None
         distance = 0
         trackname = ""
@@ -40,12 +40,15 @@ def process_gpx_file(request, file):
             for segment in track.segments:
                 for point in segment.points:
 
-                    points.append(tuple([point.latitude,
-                                        point.longitude,
-                                        point.elevation,
-                                        ]))
+                    points.append(tuple([
+                        point.latitude,
+                        point.longitude,
+                        point.elevation,
+                        ]))
 
-                    point_distance = calculate_using_haversine(points[len(points)-1], previous_point)
+                    point_distance = calculate_using_haversine(
+                        points[len(points)-1], previous_point
+                        )
                     distance += point_distance
 
                     previous_point = points[len(points)-1]
@@ -53,7 +56,8 @@ def process_gpx_file(request, file):
             atrack["trackname"] = trackname
             atrack["distance"] = round(distance/1000, 2)
             atrack["points"] = points
-    except:
+    except Exception:
+        # error processing file, file skipped
         atrack = None
 
     return atrack
@@ -74,8 +78,12 @@ def order_tracks(request, original_tracks):
         for t in tracks:
             point_first = t["points"][0]
             point_last = t["points"][len(t["points"])-1]
-            point_distance_first = calculate_using_haversine(point_first, previous_point)
-            point_distance_last = calculate_using_haversine(point_last, previous_point)
+            point_distance_first = calculate_using_haversine(
+                point_first, previous_point
+                )
+            point_distance_last = calculate_using_haversine(
+                point_last, previous_point
+                )
             if point_distance_last < point_distance_first:
                 if point_distance_last < point_distance:
                     t["points"].reverse()
@@ -95,13 +103,16 @@ def order_tracks(request, original_tracks):
     return ordered_tracks
 
 
-def make_map(request, tracks, map_filename, start_selection, end_selection, split_file):
+def make_map(
+    request, tracks, map_filename, start_selection, end_selection, split_file
+):
+
     ave_lats = []
     ave_lons = []
     for t in tracks:
         ave_lats.append(sum(float(p[0]) for p in t["points"])/len(t["points"]))
         ave_lons.append(sum(float(p[1]) for p in t["points"])/len(t["points"]))
-    
+
     ave_lat = sum(float(p) for p in ave_lats) / len(ave_lats)
     ave_lon = sum(float(p) for p in ave_lons) / len(ave_lons)
 
@@ -114,14 +125,14 @@ def make_map(request, tracks, map_filename, start_selection, end_selection, spli
     max_lon = float(-9999999)
     for t in tracks:
         for p in t["points"]:
-                if min_lat > p[0]:
-                    min_lat = p[0]
-                if max_lat < p[0]:
-                    max_lat = p[0]
-                if min_lon > p[1]:
-                    min_lon = p[1]
-                if max_lon < p[1]:
-                    max_lon = p[1]
+            if min_lat > p[0]:
+                min_lat = p[0]
+            if max_lat < p[0]:
+                max_lat = p[0]
+            if min_lon > p[1]:
+                min_lon = p[1]
+            if max_lon < p[1]:
+                max_lon = p[1]
 
     sw = tuple([min_lat, min_lon])
     ne = tuple([max_lat, max_lon])
@@ -134,7 +145,12 @@ def make_map(request, tracks, map_filename, start_selection, end_selection, spli
             points.append(tuple([p[0], p[1]]))
 
     # add lines
-    folium.PolyLine(points, color=settings.CONNECT_COLOR , weight=2.5, opacity=1).add_to(my_map)
+    folium.PolyLine(
+        points,
+        color=settings.CONNECT_COLOR,
+        weight=2.5,
+        opacity=1
+        ).add_to(my_map)
 
     if len(tracks) > 1:
         i = 0
@@ -147,11 +163,28 @@ def make_map(request, tracks, map_filename, start_selection, end_selection, spli
                 end_color = settings.END_COLOR
             else:
                 end_color = settings.MARKER_COLOR
-            my_map = draw_map(request, my_map, track, start_color, end_color, start_selection, end_selection, False)
+            my_map = draw_map(
+                request,
+                my_map,
+                track,
+                start_color,
+                end_color,
+                start_selection,
+                end_selection,
+                False
+                )
             i += 1
     else:
-        my_map = draw_map(request, my_map, track, settings.START_COLOR, settings.END_COLOR, start_selection, end_selection, split_file)
-
+        my_map = draw_map(
+            request,
+            my_map,
+            track,
+            settings.START_COLOR,
+            settings.END_COLOR,
+            start_selection,
+            end_selection,
+            split_file
+            )
 
     folium.LayerControl(collapsed=True).add_to(my_map)
 
@@ -165,7 +198,10 @@ def make_map(request, tracks, map_filename, start_selection, end_selection, spli
     return
 
 
-def draw_map(request, my_map, track, start_color, end_color, start_selection, end_selection, split_file):
+def draw_map(
+    request, my_map, track, start_color, end_color,
+    start_selection, end_selection, split_file
+):
     if end_selection > len(track["points"]) - 1:
         end_selection = len(track["points"]) - 1
 
@@ -188,20 +224,55 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
                 points_before.append(p)
 
             ip += 1
- 
+
     # add lines and markers
     if split_file:
         if len(points_selected) > 0:
-            folium.PolyLine(points_selected, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
-            add_markers(my_map, points_selected, settings.LINE_COLOR, len(points_before))
+            folium.PolyLine(
+                points_selected,
+                color=settings.LINE_COLOR,
+                weight=2.5,
+                opacity=1
+                ).add_to(my_map)
+            add_markers(
+                my_map,
+                points_selected,
+                settings.LINE_COLOR,
+                len(points_before)
+                )
             if len(points_before) > 0:
-                folium.PolyLine(points_before, color=settings.NOT_SELECTED_COLOR, weight=2.5, opacity=1).add_to(my_map)
-                add_markers(my_map, points_before, settings.NOT_SELECTED_COLOR, 0)
+                folium.PolyLine(
+                    points_before,
+                    color=settings.NOT_SELECTED_COLOR,
+                    weight=2.5,
+                    opacity=1
+                    ).add_to(my_map)
+                add_markers(
+                    my_map,
+                    points_before,
+                    settings.NOT_SELECTED_COLOR,
+                    0
+                    )
             if len(points_after) > 0:
-                folium.PolyLine(points_after, color=settings.NOT_SELECTED_COLOR, weight=2.5, opacity=1).add_to(my_map)
-                add_markers(my_map, points_after, settings.NOT_SELECTED_COLOR, (len(points_before) - 1 + len(points_selected)))
+                folium.PolyLine(
+                    points_after,
+                    color=settings.NOT_SELECTED_COLOR,
+                    weight=2.5,
+                    opacity=1
+                    ).add_to(my_map)
+                add_markers(
+                    my_map,
+                    points_after,
+                    settings.NOT_SELECTED_COLOR,
+                    (len(points_before) - 1 + len(points_selected))
+                    )
     else:
-        folium.PolyLine(points, color=settings.LINE_COLOR, weight=2.5, opacity=1).add_to(my_map)
+        folium.PolyLine(
+            points,
+            color=settings.LINE_COLOR,
+            weight=2.5,
+            opacity=1
+            ).add_to(my_map)
 
     # start marker
     if not split_file:
@@ -220,7 +291,12 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
         strStart + track["filename"] + "</p>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[start_selection], icon=folium.Icon(color=start_color), tooltip=tooltip, popup=popup).add_to(my_map)
+    folium.Marker(
+        points[start_selection],
+        icon=folium.Icon(color=start_color),
+        tooltip=tooltip,
+        popup=popup
+        ).add_to(my_map)
 
     # finish marker
     if not split_file:
@@ -239,7 +315,12 @@ def draw_map(request, my_map, track, start_color, end_color, start_selection, en
         strFinish + track["filename"] + "</p>"
     )
     popup = folium.Popup(html, max_width=300)
-    folium.Marker(points[end_selection], icon=folium.Icon(color=end_color), tooltip=tooltip, popup=popup).add_to(my_map)           
+    folium.Marker(
+        points[end_selection],
+        icon=folium.Icon(color=end_color),
+        tooltip=tooltip,
+        popup=popup
+        ).add_to(my_map)
 
     return my_map
 
@@ -278,7 +359,11 @@ def download_gpx(request, trackname, tracks, start_selection, end_selection):
     if not trackname:
         trackname = tracks[0]["trackname"]
     gpxfilename = trackname+".gpx"
-    response['Content-Disposition'] = 'attachment; filename="'+trackname+'.gpx'+'"'
+    response['Content-Disposition'] = (
+        'attachment; filename="' +
+        trackname +
+        '.gpx"'
+        )
 
     writer = csv.writer(response)
 
@@ -286,8 +371,10 @@ def download_gpx(request, trackname, tracks, start_selection, end_selection):
 
     writer.writerow([
         str("<gpx version='1.1' creator='acsgpxstitch' " +
-        "xmlns='http://www.topografix.com/GPX/1/1' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "+ 
-        "xsi:schemaLocation='http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd'>")
+            "xmlns='http://www.topografix.com/GPX/1/1' " +
+            "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' " +
+            "xsi:schemaLocation='http://www.topografix.com/GPX/1/1 " +
+            "http://www.topografix.com/GPX/1/1/gpx.xsd'>")
         ])
     writer.writerow([str("  <trk>")])
     writer.writerow([str("    <name>"+escaped(trackname)+"</name>")])
@@ -299,8 +386,14 @@ def download_gpx(request, trackname, tracks, start_selection, end_selection):
         while row < len(points):
             if row >= start_selection:
                 if row <= end_selection:
-                    writer.writerow([str("      <trkpt lat='"+str(points[row][0])+"' lon='"+str(points[row][1])+"'>")])
-                    writer.writerow([str("        <ele>"+str(points[row][2])+"</ele>")])
+                    writer.writerow([
+                            str("      <trkpt lat='" +
+                                str(points[row][0]) +
+                                "' lon='"+str(points[row][1])+"'>")
+                        ])
+                    writer.writerow([
+                        str("        <ele>"+str(points[row][2])+"</ele>")
+                        ])
                     writer.writerow([str("      </trkpt>")])
             row += 1
 
@@ -331,4 +424,3 @@ def escaped(astring):
     astring = astring.replace('"', "&quot;")
 
     return astring
-

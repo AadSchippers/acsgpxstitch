@@ -19,10 +19,12 @@ import copy
 import random
 
 
-def track_list(request):   
+def track_list(request):
     map_filename_random = "_" + str(random.randint(0, 9))
-    map_filename = settings.TRACK_MAP.replace('.html', map_filename_random) + '.html'
-    basemap_filename = settings.BASE_MAP 
+    map_filename = (
+        settings.TRACK_MAP.replace('.html', map_filename_random) + '.html'
+        )
+    basemap_filename = settings.BASE_MAP
     gpxdownload = None
     intelligent_stitch = None
     split_file = None
@@ -41,33 +43,38 @@ def track_list(request):
                 new_track = (process_gpx_file(request, file))
                 if new_track:
                     original_tracks.append(copy.deepcopy(new_track))
-            except:
+            except Exception:
                 pass
 
         gpxdownload = request.POST.get('gpxdownload')
         trackname = request.POST.get('trackname')
         try:
             start_selection = int(request.POST.get('start_selection'))
-        except:
+        except Exception:
             pass
         try:
             end_selection = int(request.POST.get('end_selection'))
-        except:
+        except Exception:
             pass
         if not original_tracks:
             try:
-                original_tracks = ast.literal_eval(request.POST.get('original_tracks'))
-            except:
+                original_tracks = ast.literal_eval(
+                    request.POST.get('original_tracks')
+                    )
+            except Exception:
                 return redirect('track_list')
-        
+
         if len(original_tracks) == 0:
             return redirect('track_list')
-    
+        
+        if not is_input_valid(trackname):
+            trackname = original_tracks[0]["trackname"]
+
         if len(original_tracks) == 1:
             intelligent_stitch = None
         else:
             intelligent_stitch = request.POST.get('intelligent_stitch')
-        
+
         if len(original_tracks) == 1:
             split_file = request.POST.get('split_file')
         else:
@@ -79,10 +86,19 @@ def track_list(request):
             tracks = original_tracks.copy()
 
         if gpxdownload == 'True':
-            return download_gpx(request, trackname, tracks, start_selection, end_selection)
+            return download_gpx(
+                request, trackname, tracks, start_selection, end_selection
+                )
 
-        make_map(request, tracks, map_filename, start_selection, end_selection, split_file)
-    
+        make_map(
+            request,
+            tracks,
+            map_filename,
+            start_selection,
+            end_selection,
+            split_file
+            )
+
     total_distance = 0
     for t in tracks:
         total_distance += t["distance"]
@@ -105,5 +121,6 @@ def is_input_valid(input=None):
     pattern = (r"^[A-z0-9\- +\ ]+$")
     try:
         return re.match(pattern, input) is not None
-    except:
+    except Exception:
+        # invalid characters in input have been skipped
         return None
