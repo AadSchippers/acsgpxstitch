@@ -1,5 +1,6 @@
 from django.conf import settings
 import os
+from django.contrib.messages import get_messages
 import gpxpy
 import gpxpy.gpx
 import folium
@@ -57,7 +58,6 @@ def process_gpx_file(request, file):
             atrack["distance"] = round(distance/1000, 2)
             atrack["points"] = points
     except Exception:
-        # error processing file, file skipped
         atrack = None
 
     return atrack

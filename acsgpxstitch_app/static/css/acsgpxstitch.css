@@ -33,48 +33,48 @@ color: #700394;
 }  
 
 @media only screen and (max-width: 600px) {
-.scalefont {
-  font-size: 1.5vw; 
-}  
-.scalefont h1{
-  font-size: 4vw;
-}  
-.scalefont h2{
-  font-size: 3.5vw;
-}  
-.scalefont h3{
-  font-size: 2.5vw;
-}  
+  .scalefont {
+    font-size: 1.5vw; 
+  }  
+  .scalefont h1{
+    font-size: 4vw;
+  }  
+  .scalefont h2{
+    font-size: 3.5vw;
+  }  
+  .scalefont h3{
+    font-size: 2.5vw;
+  }  
 }
 
 @media only screen and (min-width: 600px) {
-.scalefont {
-  font-size: 1vw; 
-}  
-.scalefont h1{
-  font-size: 3vw;
-}  
-.scalefont h2{
-  font-size: 2.5vw;
-}  
-.scalefont h3{
-  font-size: 2vw;
-}  
+  .scalefont {
+    font-size: 1vw; 
+  }  
+  .scalefont h1{
+    font-size: 3vw;
+  }  
+  .scalefont h2{
+    font-size: 2.5vw;
+  }  
+  .scalefont h3{
+    font-size: 2vw;
+  }  
 }
 
 @media only screen and (min-width: 1600px) {
-.scalefont {
-  font-size: 0.85vw; 
-}  
-.scalefont h1{
-  font-size: 2.5vw;
-}  
-.scalefont h2{
-  font-size: 2vw;
-}  
-.scalefont h3{
-  font-size: 1.5vw;
-}  
+  .scalefont {
+    font-size: 0.85vw; 
+  }  
+  .scalefont h1{
+    font-size: 2.5vw;
+  }  
+  .scalefont h2{
+    font-size: 2vw;
+  }  
+  .scalefont h3{
+    font-size: 1.5vw;
+  }  
 }
 
 .scalefont:hover {

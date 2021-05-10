@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 
+# SECRET_KEY =
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = 
+# DEBUG =
 
 ALLOWED_HOSTS = []
 
@@ -88,16 +88,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.' +
+        'UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.' +
+        'MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.' +
+        'CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.' +
+        'NumericPasswordValidator',
     },
 ]
 
@@ -129,11 +133,13 @@ MAPS_URL = '/acsgpxstitch_app/static/maps/'
 MAPS_ROOT = os.path.join(BASE_DIR, 'acsgpxstitch_app/static/maps')
 
 NAMESPACE = {'ns': 'http://www.topografix.com/GPX/1/1'}
-GPXTPXNAMESPACE = {'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'}
+GPXTPXNAMESPACE = {
+    'gpxtpxns': 'http://www.garmin.com/xmlschemas/TrackPointExtension/v1'
+    }
 
 # Folium maps
-TRACK_MAP = "acsgpxstitch.html" 
-BASE_MAP = "acsgpxstitch_base.html" 
+TRACK_MAP = "acsgpxstitch.html"
+BASE_MAP = "acsgpxstitch_base.html"
 
 # Folium map colours
 LINE_COLOR = "red"
@@ -141,6 +147,6 @@ MARKER_COLOR = 'purple'
 NOT_SELECTED_COLOR = 'gray'
 START_COLOR = "pink"
 END_COLOR = "darkpurple"
-CONNECT_COLOR="darkred"
+CONNECT_COLOR = "darkred"
 
 from .config import *   # noqa
