@@ -3,8 +3,8 @@
 {% block content %}
 <script>
     function processFiles(id) {
-        document.getElementById("id-processing-p").style.visibility = "visible";
-        document.getElementById("id-processing-img").style.visibility = "visible";
+        document.getElementById("id-processing-p").style.display = "block";
+        document.getElementById("id-processing-img").style.display = "block";
         document.getElementById(id).submit();
     }
 </script>
@@ -172,8 +172,6 @@
                             </form>
                         </table>
                 {% endif %}
-                    <p id="id-processing-p" style="text-align: right; visibility: hidden;">Please be patient, I'm busy...</p>
-                    <img id="id-processing-img" style="float:right; width:135px; height:112px;visibility: hidden;" src="/static/img/acstracks-progress.gif">    
             </div>
             <div class="col-8">
                 {% if tracks.0.filename %}
