@@ -18,7 +18,11 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                                 <div class="file-field">
-                                    <label for="gpxfile" id="gpxfilelabel" class="gpxfilelabel save btn btn-default scalefont">Select GPX files to split or stitch</label>
+                                    <label for="gpxfile" 
+                                            id="gpxfilelabel" 
+                                            class="gpxfilelabel save btn btn-default scalefont">
+                                            <b>Select GPX files to split or stitch</b>
+                                    </label>
                                     <div class="btn">
                                         <input type="file" id="gpxfile" name="gpxfile" accept=".gpx" multiple style="display:none">
                                     </div>
