@@ -51,46 +51,61 @@
                 </table>
                 <hr>
                 {% if tracks.0.filename %}
-                    <table id="click-table" style="overflow-x:auto;" class="table-hover scalefont">
+                    <table id="click-table" class="table-hover scalefont" style="width: 100%">
                         <thead>
-                            <th>Filename</th>
+                            <th style="width: 100%">Filename</th>
                             <th style="text-align:right;">Length (km)</th>
                             {% if intelligent_stitch %}
-                                <th>Reversed</th>
+                                <th style="width: 100%">Reversed</th>
                             {% endif %}
                         </thead>
-                        <tbody>
-                            {% for track in tracks %}
-                                <tr>
-                                    {% if track.filename %}
-                                        <td>{{ track.filename }}</td>
-                                        <td style="text-align:right;">{{ track.distance }}</td>
-                                        {% if intelligent_stitch %}
-                                            <td>
-                                                <label class="checkcontainer">
-                                                    <input type="checkbox"
-                                                        name="reverse_track" 
-                                                        {% if track.reversed %}
-                                                            checked="checked" 
-                                                        {% endif %}
-                                                        id="id_reverse_track"
-                                                        disabled="disabled">
-                                                    <span class="checkmark"></span> 
-                                                </label>
-                                            </td>
+                    </table>
+                    <div style="overflow-y:auto; height: 50%;">
+                        <table id="click-table" class="table-hover scalefont">
+                            <tbody>
+                                {% for track in tracks %}
+                                    <tr>
+                                        {% if track.filename %}
+                                            <td style="width: 75%;">{{ track.filename }}</td>
+                                            <td style="text-align:right; width: 10%;">{{ track.distance }}</td>
+                                            {% if intelligent_stitch %}
+                                                <td style="width: 15%;">
+                                                    <label class="checkcontainer">
+                                                        <input type="checkbox"
+                                                            name="reverse_track" 
+                                                            {% if track.reversed %}
+                                                                checked="checked" 
+                                                            {% endif %}
+                                                            id="id_reverse_track"
+                                                            disabled="disabled">
+                                                        <span class="checkmark"></span> 
+                                                    </label>
+                                                </td>
+                                            {% endif %}
                                         {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if tracks.1.filename %}
+                        <hr>
+                        <table style="width: 100%">
+                            <body>
+                                <tr>
+                                    {% if intelligent_stitch %}
+                                        <td style="width: 75%;"><b>Total:</b></td>
+                                        <td style="text-align:right; width: 10%"><b>{{ total_distance }}</b></td>
+                                        <td style="width: 15%;"></td>
+                                    {% else %}
+                                        <td style="width: 100%;"><b>Total:</b></td>
+                                        <td style="text-align:right;"><b>{{ total_distance }}</b></td>
                                     {% endif %}
                                 </tr>
-                            {% endfor %}
-                            {% if tracks.1.filename %}
-                                <tr>
-                                    <td><b>Total:</b></td>
-                                    <td style="text-align:right;"><b>{{ total_distance }}</b></td>
-                                </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                    <hr>
+                            </tbody>
+                        </table>
+                    {% endif %}
+                    <br>
                     {% if not tracks.1.filename %}
                         <table class="scalefont">
                             <form method="post" class="md-form" id="splitform" enctype="multipart/form-data">
