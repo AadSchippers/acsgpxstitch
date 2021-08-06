@@ -22,7 +22,7 @@ import random
 
 
 def track_list(request):
-    map_filename_random = "_" + str(random.randint(0, 9))
+    map_filename_random = "_" + str(random.randint(0, 99)).zfill(2)
     map_filename = (
         settings.TRACK_MAP.replace('.html', map_filename_random) + '.html'
         )
