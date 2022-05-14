@@ -142,7 +142,8 @@ TRACK_MAP = "acsgpxstitch.html"
 BASE_MAP = "acsgpxstitch_base.html"
 
 # Folium map colours
-LINE_COLOR = "red"
+# LINE_COLOR = "red"
+LINE_COLOR = "purple"
 MARKER_COLOR = 'purple'
 NOT_SELECTED_COLOR = 'gray'
 START_COLOR = "pink"
