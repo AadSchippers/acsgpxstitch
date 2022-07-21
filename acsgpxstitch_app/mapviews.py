@@ -104,7 +104,7 @@ def order_tracks(request, original_tracks):
 
 
 def make_map(
-    request, tracks, map_filename, start_selection, end_selection, split_file
+    request, tracks, map_filename, start_selection, end_selection, split_track
 ):
 
     ave_lats = []
@@ -183,7 +183,7 @@ def make_map(
             settings.END_COLOR,
             start_selection,
             end_selection,
-            split_file
+            split_track
             )
 
     folium.LayerControl(collapsed=True).add_to(my_map)
@@ -200,7 +200,7 @@ def make_map(
 
 def draw_map(
     request, my_map, track, start_color, end_color,
-    start_selection, end_selection, split_file
+    start_selection, end_selection, split_track
 ):
     if end_selection > len(track["points"]) - 1:
         end_selection = len(track["points"]) - 1
@@ -212,7 +212,7 @@ def draw_map(
     points_before = []
     points_selected = []
     points_after = []
-    if split_file:
+    if split_track == 'on':
         ip = 0
         for p in points:
             if ip >= start_selection:
@@ -226,7 +226,7 @@ def draw_map(
             ip += 1
 
     # add lines and markers
-    if split_file:
+    if split_track  == 'on':
         if len(points_selected) > 0:
             folium.PolyLine(
                 points_selected,
@@ -275,7 +275,7 @@ def draw_map(
             ).add_to(my_map)
 
     # start marker
-    if not split_file:
+    if not split_track == 'on':
         start_selection = 0
 
     if start_selection > 0:
@@ -299,7 +299,7 @@ def draw_map(
         ).add_to(my_map)
 
     # finish marker
-    if not split_file:
+    if not split_track == 'on':
         end_selection = len(track["points"]) - 1
 
     if end_selection < len(track["points"]) - 1:

@@ -30,7 +30,8 @@ def track_list(request):
     trackname = None
     gpxdownload = None
     intelligent_stitch = None
-    split_file = None
+    split_track = None
+    reverse_track = None
     start_selection = 0
     end_selection = 9999999
     tracks = []
@@ -76,20 +77,26 @@ def track_list(request):
         if len(original_tracks) == 0:
             return redirect('track_list')
 
+        tracks = original_tracks.copy()
+
         if len(original_tracks) == 1:
+            split_track = request.POST.get('split_track')
+            reverse_track = request.POST.get('reverse_track')
             intelligent_stitch = None
+            if reverse_track == 'on':
+                if tracks[0]["reversed"] == False: 
+                    tracks[0]["reversed"] = True
+                    tracks[0]["points"].reverse()
+            else:
+                if tracks[0]["reversed"] == True: 
+                    tracks[0]["reversed"] = False
+                    tracks[0]["points"].reverse()
         else:
+            split_track = None
+            reverse_track = None
             intelligent_stitch = request.POST.get('intelligent_stitch')
-
-        if len(original_tracks) == 1:
-            split_file = request.POST.get('split_file')
-        else:
-            split_file = None
-
-        if intelligent_stitch:
-            tracks = order_tracks(request, original_tracks)
-        else:
-            tracks = original_tracks.copy()
+            if intelligent_stitch:
+                tracks = order_tracks(request, original_tracks)
 
         if gpxdownload == 'True':
             trackname = request.POST.get('trackname')
@@ -113,7 +120,7 @@ def track_list(request):
             map_filename,
             start_selection,
             end_selection,
-            split_file,
+            split_track,
             )
 
     total_distance = 0
@@ -124,9 +131,10 @@ def track_list(request):
         "tracks": tracks,
         "original_tracks": original_tracks,
         "intelligent_stitch": intelligent_stitch,
-        "split_file": split_file,
+        "split_track": split_track,
         "start_selection": start_selection,
         "end_selection": end_selection,
+        "reverse_track": reverse_track,
         "total_distance": round(total_distance, 2),
         "map_filename": "/static/maps/" + map_filename,
         "basemap_filename": "/static/maps/" + basemap_filename,
