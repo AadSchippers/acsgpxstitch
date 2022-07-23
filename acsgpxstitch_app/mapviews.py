@@ -104,7 +104,7 @@ def order_tracks(request, original_tracks):
 
 
 def make_map(
-    request, tracks, map_filename, start_selection, end_selection, split_track
+    request, tracks, map_filename, start_selection, end_selection, split_track, set_new_start_point
 ):
 
     ave_lats = []
@@ -171,6 +171,7 @@ def make_map(
                 end_color,
                 start_selection,
                 end_selection,
+                False,
                 False
                 )
             i += 1
@@ -183,7 +184,8 @@ def make_map(
             settings.END_COLOR,
             start_selection,
             end_selection,
-            split_track
+            split_track,
+            set_new_start_point
             )
 
     folium.LayerControl(collapsed=True).add_to(my_map)
@@ -200,7 +202,7 @@ def make_map(
 
 def draw_map(
     request, my_map, track, start_color, end_color,
-    start_selection, end_selection, split_track
+    start_selection, end_selection, split_track, set_new_start_point
 ):
     if end_selection > len(track["points"]) - 1:
         end_selection = len(track["points"]) - 1
@@ -212,7 +214,7 @@ def draw_map(
     points_before = []
     points_selected = []
     points_after = []
-    if split_track == 'on':
+    if split_track == 'on' or set_new_start_point == 'on':
         ip = 0
         for p in points:
             if ip >= start_selection:
@@ -226,7 +228,7 @@ def draw_map(
             ip += 1
 
     # add lines and markers
-    if split_track  == 'on':
+    if split_track  == 'on' or set_new_start_point == 'on':
         if len(points_selected) > 0:
             folium.PolyLine(
                 points_selected,
@@ -240,32 +242,32 @@ def draw_map(
                 settings.LINE_COLOR,
                 len(points_before)
                 )
-            if len(points_before) > 0:
-                folium.PolyLine(
-                    points_before,
-                    color=settings.NOT_SELECTED_COLOR,
-                    weight=2.5,
-                    opacity=1
-                    ).add_to(my_map)
-                add_markers(
-                    my_map,
-                    points_before,
-                    settings.NOT_SELECTED_COLOR,
-                    0
-                    )
-            if len(points_after) > 0:
-                folium.PolyLine(
-                    points_after,
-                    color=settings.NOT_SELECTED_COLOR,
-                    weight=2.5,
-                    opacity=1
-                    ).add_to(my_map)
-                add_markers(
-                    my_map,
-                    points_after,
-                    settings.NOT_SELECTED_COLOR,
-                    (len(points_before) - 1 + len(points_selected))
-                    )
+        if len(points_before) > 0:
+            folium.PolyLine(
+                points_before,
+                color=settings.NOT_SELECTED_COLOR,
+                weight=2.5,
+                opacity=1
+                ).add_to(my_map)
+            add_markers(
+                my_map,
+                points_before,
+                settings.NOT_SELECTED_COLOR,
+                0
+                )
+        if len(points_after) > 0:
+            folium.PolyLine(
+                points_after,
+                color=settings.NOT_SELECTED_COLOR,
+                weight=2.5,
+                opacity=1
+                ).add_to(my_map)
+            add_markers(
+                my_map,
+                points_after,
+                settings.NOT_SELECTED_COLOR,
+                (len(points_before) - 1 + len(points_selected))
+                )
     else:
         folium.PolyLine(
             points,

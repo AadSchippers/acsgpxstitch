@@ -32,6 +32,9 @@ def track_list(request):
     intelligent_stitch = None
     split_track = None
     reverse_track = None
+    new_start_point_possible = False
+    set_new_start_point = None
+    new_start_point = 0
     start_selection = 0
     end_selection = 9999999
     tracks = []
@@ -58,14 +61,6 @@ def track_list(request):
                 pass
 
         gpxdownload = request.POST.get('gpxdownload')
-        try:
-            start_selection = int(request.POST.get('start_selection'))
-        except Exception:
-            pass
-        try:
-            end_selection = int(request.POST.get('end_selection'))
-        except Exception:
-            pass
         if not original_tracks:
             try:
                 original_tracks = ast.literal_eval(
@@ -80,8 +75,29 @@ def track_list(request):
         tracks = original_tracks.copy()
 
         if len(original_tracks) == 1:
-            split_track = request.POST.get('split_track')
+            new_start_point_possible = calculate_using_haversine(
+                    tracks[0]["points"][0],
+                    tracks[0]["points"][len(tracks[0]["points"])-1],
+                ) < 100
+
             reverse_track = request.POST.get('reverse_track')
+            split_track = request.POST.get('split_track')
+            try:
+                start_selection = int(request.POST.get('start_selection'))
+            except Exception:
+                pass
+            try:
+                end_selection = int(request.POST.get('end_selection'))
+            except Exception:
+                pass
+            set_new_start_point = request.POST.get('set_new_start_point')
+            try:
+                new_start_point = int(request.POST.get('new_start_point'))
+            except Exception:
+                pass
+            if new_start_point > 0:
+                points = tracks[0]["points"]
+                tracks[0]["points"] = compute_new_start_point(new_start_point, points)
             intelligent_stitch = None
             if reverse_track == 'on':
                 if tracks[0]["reversed"] == False: 
@@ -121,6 +137,7 @@ def track_list(request):
             start_selection,
             end_selection,
             split_track,
+            set_new_start_point,
             )
 
     total_distance = 0
@@ -135,6 +152,9 @@ def track_list(request):
         "start_selection": start_selection,
         "end_selection": end_selection,
         "reverse_track": reverse_track,
+        "new_start_point_possible": new_start_point_possible,
+        "set_new_start_point": set_new_start_point,
+        "new_start_point": new_start_point,
         "total_distance": round(total_distance, 2),
         "map_filename": "/static/maps/" + map_filename,
         "basemap_filename": "/static/maps/" + basemap_filename,
@@ -142,6 +162,17 @@ def track_list(request):
         }
     )
 
+
+def compute_new_start_point(new_start_point, points):
+    new_points = []
+    for ip, p in enumerate(points):
+        if ip >= new_start_point:
+            new_points.append(p)
+    for ip, p in enumerate(points):
+        if ip < new_start_point:
+            new_points.append(p)
+
+    return new_points
 
 def is_input_valid(input=None):
     pattern = (r"^[A-z0-9\- +\ ]+$")
