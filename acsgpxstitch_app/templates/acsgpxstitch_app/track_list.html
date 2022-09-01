@@ -119,6 +119,7 @@
                             <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
                             <input type="hidden" name="start_selection" value="{{ start_selection }}">
                             <input type="hidden" name="end_selection" value="{{ end_selection }}">
+                            <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
                                 <tr>
                                     <td>
                                         <label class="checkcontainer">
@@ -140,6 +141,7 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="tracks" value="{{ tracks }}">
                                     <input type="hidden" name="original_tracks" value="{{ original_tracks }}">
+                                    <input type="hidden" name="reverse_track" value="{{ reverse_track }}">
                                     <input type="hidden" name="split_track" value="{{ split_track }}">
                                         <tr>
                                         <td>
