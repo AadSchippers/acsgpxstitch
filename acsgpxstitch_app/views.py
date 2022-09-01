@@ -72,6 +72,7 @@ def track_list(request):
         if len(original_tracks) == 0:
             return redirect('track_list')
 
+        original_tracks = sorted(original_tracks, key=lambda d: d['filename']) 
         tracks = original_tracks.copy()
 
         if len(original_tracks) == 1:

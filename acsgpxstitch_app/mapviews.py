@@ -76,6 +76,9 @@ def order_tracks(request, original_tracks):
         point_distance = 9999999999
         ti = 0
         for t in tracks:
+            if t["reversed"] == True:
+                t["points"].reverse()
+                t["reversed"] = False
             point_first = t["points"][0]
             point_last = t["points"][len(t["points"])-1]
             point_distance_first = calculate_using_haversine(
