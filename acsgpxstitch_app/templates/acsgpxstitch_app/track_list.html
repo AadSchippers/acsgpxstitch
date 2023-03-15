@@ -3,14 +3,25 @@
 {% block content %}
 <script>
     function processFiles(id) {
-        document.getElementById("id-processing-p").style.display = "block";
-        document.getElementById("id-processing-img").style.display = "block";
+        document.getElementById("id-processing-anim-p").style.display = "block";
+        document.getElementById("id-processing-anim-img").style.display = "block";
+        document.getElementById("id-processing-static-img").style.display = "none";
         document.getElementById("id-messages").style.display = "none";
         document.getElementById(id).submit();
     }
 </script>
         <div class="row">
             <div class="col-4">
+                <table style="width:100%" class="scalefont">
+                    <tr>
+                        <td align="center">
+                            <img id="id-processing-static-img" style="width:135px; height:131px; display: block;" src="/static/img/acsgpxstitch-progress-static.gif">        
+                            <img id="id-processing-anim-img" style="width:135px; height:131px; display: none;" src="/static/img/acsgpxstitch-progress-anim.gif">        
+                            <br><p id="id-processing-anim-p" style="text-align: center; display: none;">Processing...</p>
+                        </td>
+                    </tr>
+                </table>
+                <hr>
                 <table style="width:100%" class="scalefont">
                     <tr>
                         <td>

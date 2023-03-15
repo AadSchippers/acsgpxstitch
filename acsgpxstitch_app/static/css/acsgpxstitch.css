@@ -1,11 +1,11 @@
 .page-header {
-  background-color: #C4C4C4;
+  background-color: #bb9255;
   margin-top: 0;
   padding: 20px 20px 30px 40px;
 }
 
 .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
-  color: #700394;
+  color: maroon;
   font-size: 36pt;
   font-family: 'Oswald';
   margin-left: 8px;
@@ -29,7 +29,7 @@
 }
 
 .scalefont {
-color: #700394; 
+color: maroon; 
 }  
 
 @media only screen and (max-width: 600px) {
@@ -78,7 +78,7 @@ color: #700394;
 }
 
 .scalefont:hover {
-color: #700394;
+color: maroon;
 }
 
 .helptext {
@@ -115,8 +115,8 @@ visibility: visible;
 body {
   padding-left: 15px;
   padding-right: 15px;
-  background-color: #F0F0F0;
-  background-image: url("/static/img/acsgpxstitchbg-blurred.jpg");
+  background-color: #bb9255;
+  background-image: url("/static/img/acsgpxstitchbg-blurred.png");
   background-repeat: no-repeat;
   background-size: cover;
   max-width: 100%;
@@ -137,7 +137,7 @@ table, th, td {
 }
 
 .table-hover, th, td {
-  color: #700394;
+  color: maroon;
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -154,11 +154,11 @@ table, th, td {
   width: 100%;
   background-color: transparent;
   border-color: transparent;
-  color: #700394;
+  color: maroon;
 }
 
 a, a:active, a:visited, a:hover, a:link {
-  color: #700394;  
+  color: maroon;  
 }
 
 .container {
@@ -215,17 +215,17 @@ a, a:active, a:visited, a:hover, a:link {
   left: 0;
   height: 15px;
   width: 15px;
-  background-color: #fb89ec;
+  background-color: orange;
 }
 
 /* On mouse-over, add a grey background color */
 .checkcontainer:hover input ~ .checkmark {
-  background-color: #fa56e4;
+  background-color: orangered;
 }
 
 /* When the checkbox is checked, add a blue background */
 .checkcontainer input:checked ~ .checkmark {
-  background-color: #700394;
+  background-color: maroon;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
@@ -246,7 +246,7 @@ a, a:active, a:visited, a:hover, a:link {
   top: 2px;
   width: 5px;
   height: 10px;
-  border: solid pink;
+  border: solid orange;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);

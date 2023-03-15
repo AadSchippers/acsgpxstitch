@@ -142,11 +142,11 @@ TRACK_MAP = "acsgpxstitch.html"
 BASE_MAP = "acsgpxstitch_base.html"
 
 # Folium map colours
-LINE_COLOR = "purple"
-MARKER_COLOR = 'purple'
+LINE_COLOR = "maroon"
+MARKER_COLOR = 'maroon'
 NOT_SELECTED_COLOR = 'gray'
-START_COLOR = "pink"
-END_COLOR = "darkpurple"
+START_COLOR = "orange"
+END_COLOR = "orangered"
 CONNECT_COLOR = "gray"
 
 from .config import *   # noqa
