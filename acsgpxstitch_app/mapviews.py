@@ -289,10 +289,10 @@ def draw_map(
         strStart = "Start "
 
     tooltip_text = strStart + track["filename"]
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip_style = 'color: maroon; font-size: 0.85vw'
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     html = (
-        "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+        "<p style='color: maroon; font-weight: bold; font-size: 1.0vw'>" +
         strStart + track["filename"] + "</p>"
     )
     popup = folium.Popup(html, max_width=300)
@@ -313,10 +313,10 @@ def draw_map(
         strFinish = "Finish "
 
     tooltip_text = strFinish + track["filename"]
-    tooltip_style = 'color: #700394; font-size: 0.85vw'
+    tooltip_style = 'color: maroon; font-size: 0.85vw'
     tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
     html = (
-        "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+        "<p style='color: maroon; font-weight: bold; font-size: 1.0vw'>" +
         strFinish + track["filename"] + "</p>"
     )
     popup = folium.Popup(html, max_width=300)
@@ -335,10 +335,10 @@ def add_markers(my_map, points, marker_color, ip_start):
     ip = ip_start
     for p in points:
         tooltip_text = 'Point ' + str(ip)
-        tooltip_style = 'color: #700394; font-size: 0.85vw'
+        tooltip_style = 'color: maroon; font-size: 0.85vw'
         tooltip = folium.Tooltip(tooltip_text, style=tooltip_style)
         html = (
-            "<p style='color: #700394; font-weight: bold; font-size: 1.0vw'>" +
+            "<p style='color: maroon; font-weight: bold; font-size: 1.0vw'>" +
             tooltip_text + "</p>"
         )
         popup = folium.Popup(html, max_width=300)
