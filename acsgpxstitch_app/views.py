@@ -91,6 +91,12 @@ def track_list(request):
                 end_selection = int(request.POST.get('end_selection'))
             except Exception:
                 pass
+            try:
+                if start_selection > end_selection:
+                    start_selection, end_selection = end_selection, start_selection
+            except:
+                pass
+
             set_new_start_point = request.POST.get('set_new_start_point')
             try:
                 new_start_point = int(request.POST.get('new_start_point'))
