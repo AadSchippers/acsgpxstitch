@@ -363,7 +363,6 @@ def download_gpx(request, trackname, tracks, start_selection, end_selection):
     response = HttpResponse(content_type='text/gpx')
     if not trackname:
         trackname = tracks[0]["trackname"]
-    gpxfilename = trackname+".gpx"
     response['Content-Disposition'] = (
         'attachment; filename="' +
         trackname +
