@@ -359,8 +359,8 @@ def add_markers(my_map, points, marker_color, ip_start):
 
 
 def download_gpx(request, trackname, tracks, start_selection, end_selection):
-    # Create the HttpResponse object with the appropriate XML header.
-    response = HttpResponse(content_type='text/xml')
+    # Create the HttpResponse object with the appropriate header.
+    response = HttpResponse(content_type='text/plain')
     if not trackname:
         trackname = tracks[0]["trackname"]
     gpxfilename = trackname+".gpx"
